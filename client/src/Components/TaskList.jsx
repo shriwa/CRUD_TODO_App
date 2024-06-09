@@ -42,6 +42,7 @@ const TaskList = () => {
       try {
         await removeTask(id);
         setTasks(tasks.filter((task) => task.id !== id));
+        setSelectedTasks(selectedTasks.filter((taskId) => taskId !== id));
       } catch (error) {
         console.error("Error removing task:", error);
       }
@@ -57,36 +58,48 @@ const TaskList = () => {
   };
 
   const handleMarkCompleted = async () => {
-    try {
-      await Promise.all(
-        selectedTasks.map((id) => updateTask(id, { completed: true }))
-      );
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          selectedTasks.includes(task.id) ? { ...task, completed: true } : task
-        )
-      );
-      setSelectedTasks([]);
-    } catch (error) {
-      console.error("Error updating tasks:", error);
-      setError("Failed to update tasks");
+    if (
+      window.confirm("Are you sure you want to to mark all tasks as completed")
+    ) {
+      try {
+        await Promise.all(
+          selectedTasks.map((id) => updateTask(id, { completed: true }))
+        );
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            selectedTasks.includes(task.id)
+              ? { ...task, completed: true }
+              : task
+          )
+        );
+        setSelectedTasks([]);
+      } catch (error) {
+        console.error("Error updating tasks:", error);
+        setError("Failed to update tasks");
+      }
     }
   };
 
   const handleMarkIncompleted = async () => {
-    try {
-      await Promise.all(
-        selectedTasks.map((id) => updateTask(id, { completed: false }))
-      );
-      setTasks((prevTasks) =>
-        prevTasks.map((task) =>
-          selectedTasks.includes(task.id) ? { ...task, completed: false } : task
-        )
-      );
-      setSelectedTasks([]);
-    } catch (error) {
-      console.error("Error updating tasks:", error);
-      setError("Failed to update tasks");
+    if (
+      window.confirm("Are you sure you want to mark all tasks as Icompleted?")
+    ) {
+      try {
+        await Promise.all(
+          selectedTasks.map((id) => updateTask(id, { completed: false }))
+        );
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            selectedTasks.includes(task.id)
+              ? { ...task, completed: false }
+              : task
+          )
+        );
+        setSelectedTasks([]);
+      } catch (error) {
+        console.error("Error updating tasks:", error);
+        setError("Failed to update tasks");
+      }
     }
   };
 
@@ -126,21 +139,26 @@ const TaskList = () => {
 
   return (
     <div className="">
-      <div className="flex items-center justify-center mb-4">
+      <div className="flex items-center justify-center gap-5 mb-4">
         <button
           onClick={handleMarkCompleted}
-          className="inline-flex gap-2 ml-2 items-center text-gray-100 bg-green-600 border border-gray-300 focus:outline-none hover:bg-green-700 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+          className={`inline-flex gap-2 items-center text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
+            selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
+          disabled={selectedTasks.length === 0}
         >
           Mark All Completed
         </button>
         <button
           onClick={handleMarkIncompleted}
-          className="inline-flex gap-2 ml-2 items-center text-gray-100 bg-red-600 border border-gray-300 focus:outline-none hover:bg-red-700 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+          className={`inline-flex gap-2 items-center text-gray-100 bg-red-700 border border-gray-300 focus:outline-none hover:bg-red-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
+            selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
+          }`}
         >
           Mark All Incomplete
         </button>
       </div>
-      <div className="relative overflow-x-auto mr-4 ml-4 shadow-md rounded-lg">
+      <div className="relative overflow-x-auto mr-4 ml-4 shadow-md rounded-lg ">
         <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-black">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-cyan-500 dark:text-gray-800">
             <tr>
@@ -174,7 +192,9 @@ const TaskList = () => {
             {tasks.map((task) => (
               <tr
                 key={task._id}
-                className="bg-white border-b dark:bg-gray-300 dark:border-gray-700"
+                className={`border-bbg-gray-300 border-gray-700 ${
+                  task.completed ? " bg-green-200" : " bg-red-200"
+                }`}
               >
                 <td className="w-4 p-4">
                   <div className="flex items-center">
@@ -193,7 +213,9 @@ const TaskList = () => {
                     </label>
                   </div>
                 </td>
-                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">
+                <td
+                  className={`px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black`}
+                >
                   {task.task}
                 </td>
                 <td className="px-6 py-4">{formatDateTime(task.createdAt)}</td>
