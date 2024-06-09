@@ -5,28 +5,50 @@ const Todo = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [taskDateTime, setTaskDateTime] = useState("");
-  const [successAlert, setSuccessAlert] = useState(false);
-  const [failureAlert, setFailureAlert] = useState(false);
+  const [alert, setAlert] = useState({ type: "", message: "" });
 
   const handleAddTask = async () => {
-    if (newTask.trim() !== "") {
-      try {
-        const res = await addTask({ task: newTask, taskDate: taskDateTime });
-        setTasks([...tasks, res.task]);
-        setNewTask("");
-        setTaskDateTime("");
-        setSuccessAlert(true);
-        setTimeout(() => {
-          setSuccessAlert(false);
-        }, 8000);
+    if (newTask.trim() === "") {
+      setAlert({
+        type: "warning",
+        message: "Task cannot be empty. Please enter a task.",
+      });
+      setTimeout(() => {
+        setAlert({ type: "", message: "" });
+      }, 8000);
+      return;
+    }
+
+    if (taskDateTime.trim() === "") {
+      setAlert({
+        type: "warning",
+        message: "Date cannot be empty. Please select a date.",
+      });
+      setTimeout(() => {
+        setAlert({ type: "", message: "" });
+      }, 8000);
+      return;
+    }
+
+    try {
+      const res = await addTask({ task: newTask, taskDate: taskDateTime });
+      setTasks([...tasks, res.task]);
+      setNewTask("");
+      setTaskDateTime("");
+      setAlert({ type: "success", message: "Task added successfully!" });
+      setTimeout(() => {
         window.location.reload();
-      } catch (error) {
-        console.error("Failed to add task:", error);
-        setFailureAlert(true);
-        setTimeout(() => {
-          setFailureAlert(false);
-        }, 8000);
-      }
+      }, 1200);
+    } catch (error) {
+      console.error("Failed to add task:", error);
+      const errorMessage = error.message || "Failed to add task.";
+      setAlert({
+        type: "failure",
+        message: `${errorMessage}`,
+      });
+      setTimeout(() => {
+        setAlert({ type: "", message: "" });
+      }, 8000);
     }
   };
 
@@ -36,48 +58,22 @@ const Todo = () => {
         <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           To-Do{" "}
         </h1>
-        {/* Success Alert */}
-        {successAlert && (
+        {/* Alert */}
+        {alert.type && (
           <div
-            id="success-alert"
-            className="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50"
+            className={`flex items-center p-4 mb-4 rounded-lg ${
+              alert.type === "success"
+                ? "text-green-800 bg-green-50"
+                : alert.type === "failure"
+                ? "text-red-800 bg-red-50"
+                : "text-yellow-800 bg-yellow-50"
+            }`}
           >
-            <div className="text-sm font-medium">Task added successfully!</div>
+            <div className="text-sm font-medium">{alert.message}</div>
             <button
               type="button"
               className="ml-auto focus:outline-none"
-              onClick={() => setSuccessAlert(false)}
-            >
-              <svg
-                className="w-4 h-4"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                ></path>
-              </svg>
-            </button>
-          </div>
-        )}
-        {/* Failure Alert */}
-        {failureAlert && (
-          <div
-            id="failure-alert"
-            className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50"
-          >
-            <div className="text-sm font-medium">
-              Failed to add task. Please try again later.
-            </div>
-            <button
-              type="button"
-              className="ml-auto focus:outline-none"
-              onClick={() => setFailureAlert(false)}
+              onClick={() => setAlert({ type: "", message: "" })}
             >
               <svg
                 className="w-4 h-4"
