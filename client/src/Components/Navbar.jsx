@@ -26,7 +26,7 @@ const Navbar = () => {
           </h4>
         </div>
         <div
-          className={` ${sticky ? `md:bg-white/0 bg-white` : `bg-white`} 
+          className={` ${sticky ? ` bg-gray-300` : `bg-gray-300`} 
             text-gray-900 md:block hidden px-7 py-2 font-medium rounded-bl-full`}
         >
           <ul className="flex items-center gap-1 py-2 text-lg">
@@ -49,7 +49,7 @@ const Navbar = () => {
           <ion-icon name="menu"></ion-icon>
         </div>
         <div
-          className={`md:hidden text-gray-900 absolute w-1.5/3 h-screen px-7 font-bold bg-white/90 top-0 right-0 duration-500 ${
+          className={`md:hidden text-gray-900 absolute w-1.5/3 h-screen px-7 font-bold bg-cyan-400/90 top-0 right-0 duration-500 ${
             open ? "right-0" : "right-[-100%]"
           }`}
         >

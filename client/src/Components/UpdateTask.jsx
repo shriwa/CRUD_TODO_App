@@ -23,10 +23,11 @@ const UpdateTask = ({ taskData }) => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
+    const updatedValue = type === "checkbox" ? checked : value;
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: updatedValue,
     });
   };
 
@@ -34,12 +35,25 @@ const UpdateTask = ({ taskData }) => {
     e.preventDefault();
     if (window.confirm("Are you sure you want to update the task?")) {
       try {
-        console.log("Updating task with data:", formData);
-        const updatedTask = await updateTask(formData.id, formData);
-        toggleModal();
-        setSuccessAlert(true);
-        console.log("Task updated successfully");
-        window.location.reload();
+        const payload = {
+          id: formData.id,
+          task: formData.task,
+          taskDate: formData.taskDate,
+          completed: formData.status === "completed",
+        };
+
+        console.log("Payload to be sent:", payload);
+        const updatedTask = await updateTask(payload.id, payload);
+        console.log("Backend response:", updatedTask);
+
+        if (updatedTask.success) {
+          toggleModal();
+          setSuccessAlert(true);
+          console.log("Task updated successfully");
+          window.location.reload();
+        } else {
+          setFailureAlert(true);
+        }
       } catch (error) {
         console.error("Failed to update task", error);
         console.error(
@@ -64,7 +78,7 @@ const UpdateTask = ({ taskData }) => {
       {isModalOpen && (
         <div className="fixed top-0 right-0 bottom-0 left-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="relative p-4 w-full max-w-md">
-            <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <div className="relative bg-white rounded-lg shadow dark:bg-gray-800">
               {/* Modal Header */}
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
@@ -140,25 +154,29 @@ const UpdateTask = ({ taskData }) => {
                     </label>
                     <div className="flex items-center">
                       <input
-                        type="checkbox"
-                        name="completed"
+                        type="radio"
+                        name="status"
                         id="completed"
-                        checked={formData.completed || false}
+                        value="completed"
+                        checked={formData.status === "completed"}
                         onChange={handleChange}
                         className="mr-2"
                       />
-                      <label htmlFor="completed" className="mr-4">
+                      <label htmlFor="completed" className="mr-4 text-white">
                         Completed
                       </label>
                       <input
-                        type="checkbox"
-                        name="incomplete"
+                        type="radio"
+                        name="status"
                         id="incomplete"
-                        checked={!formData.completed}
+                        value="incomplete"
+                        checked={formData.status === "incomplete"}
                         onChange={handleChange}
                         className="mr-2"
                       />
-                      <label htmlFor="incomplete">Incomplete</label>
+                      <label htmlFor="incomplete" className="text-white">
+                        Incomplete
+                      </label>
                     </div>
                   </div>
                 </div>

@@ -32,28 +32,16 @@ const Todo = () => {
 
   return (
     <div className="flex items-center justify-center py-6 mt-20">
-      <div className="bg-gray-200 rounded-lg shadow-lg p-6 w-full max-w-2xl">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">To-Do List</h1>
+      <div className="bg-gray-300 rounded-lg shadow-lg p-6 w-full max-w-2xl">
+        <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
+          To-Do{" "}
+        </h1>
         {/* Success Alert */}
         {successAlert && (
           <div
             id="success-alert"
             className="flex items-center p-4 mb-4 text-green-800 rounded-lg bg-green-50"
           >
-            <svg
-              className="flex-shrink-0 w-4 h-4 mr-2"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M5 13l4 4L19 7"
-              ></path>
-            </svg>
             <div className="text-sm font-medium">Task added successfully!</div>
             <button
               type="button"
@@ -83,20 +71,6 @@ const Todo = () => {
             id="failure-alert"
             className="flex items-center p-4 mb-4 text-red-800 rounded-lg bg-red-50"
           >
-            <svg
-              className="flex-shrink-0 w-4 h-4 mr-2"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
-              ></path>
-            </svg>
             <div className="text-sm font-medium">
               Failed to add task. Please try again later.
             </div>

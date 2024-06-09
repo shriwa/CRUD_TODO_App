@@ -46,8 +46,8 @@ const TaskList = () => {
 
   return (
     <div className="relative overflow-x-auto mr-4 ml-4 shadow-md sm:rounded-lg">
-      <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+      <table className="w-full text-sm text-left rtl:text-right  text-gray-500 dark:text-black">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-cyan-500 dark:text-gray-800">
           <tr>
             <th scope="col" className="p-4"></th>
             <th scope="col" className="px-6 py-3">
@@ -63,7 +63,14 @@ const TaskList = () => {
               Status
             </th>
             <th scope="col" className="px-6 py-3">
-              Options
+              <div className="flex">
+                <button
+                  onClick={() => handleRemoveTask(task.id)}
+                  className="inline-flex gap-2 ml-2 items-center  text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+                >
+                  Mark All Completed
+                </button>
+              </div>
             </th>
           </tr>
         </thead>
@@ -71,7 +78,7 @@ const TaskList = () => {
           {tasks.map((task) => (
             <tr
               key={task._id}
-              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
+              className="bg-white border-b dark:bg-gray-300 dark:border-gray-700 "
             >
               <td className="w-4 p-4">
                 <div className="flex items-center">
@@ -88,7 +95,7 @@ const TaskList = () => {
                   </label>
                 </div>
               </td>
-              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">
                 {task.task}
               </td>
               <td className="px-6 py-4">{formatDateTime(task.createdAt)}</td>
@@ -100,7 +107,7 @@ const TaskList = () => {
                 <UpdateTask taskData={task} />
                 <button
                   onClick={() => handleRemoveTask(task.id)}
-                  className="font-medium text-red-600 dark:text-red-500 hover:underline ms-3"
+                  className="inline-flex gap-2 ml-2 items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-red-600 dark:text-white dark:border-gray-600 dark:hover:bg-red-700 dark:hover:border-gray-700 dark:focus:ring-gray-700"
                 >
                   Remove
                 </button>
