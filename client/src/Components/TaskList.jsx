@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import UpdateTask from "./UpdateTask";
-import { getAllTasks, removeTask } from "../API/tasks";
+import { getAllTasks, removeTask, updateTask } from "../API/tasks"; // Assuming you have an updateTask API
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
+  const [selectedTasks, setSelectedTasks] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -47,13 +48,55 @@ const TaskList = () => {
     }
   };
 
+  const handleSelectTask = (id) => {
+    setSelectedTasks((prevSelected) =>
+      prevSelected.includes(id)
+        ? prevSelected.filter((taskId) => taskId !== id)
+        : [...prevSelected, id]
+    );
+  };
+
+  const handleMarkCompleted = async () => {
+    try {
+      await Promise.all(
+        selectedTasks.map((id) => updateTask(id, { completed: true }))
+      );
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          selectedTasks.includes(task.id) ? { ...task, completed: true } : task
+        )
+      );
+      setSelectedTasks([]);
+    } catch (error) {
+      console.error("Error updating tasks:", error);
+      setError("Failed to update tasks");
+    }
+  };
+
+  const handleMarkIncompleted = async () => {
+    try {
+      await Promise.all(
+        selectedTasks.map((id) => updateTask(id, { completed: false }))
+      );
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          selectedTasks.includes(task.id) ? { ...task, completed: false } : task
+        )
+      );
+      setSelectedTasks([]);
+    } catch (error) {
+      console.error("Error updating tasks:", error);
+      setError("Failed to update tasks");
+    }
+  };
+
   if (loading) {
     return (
-      <div class="flex items-center justify-center  border-gray-200 rounded-lg bg-gray-50">
+      <div className="flex items-center justify-center border-gray-200 rounded-lg bg-gray-50">
         <div role="status">
           <svg
             aria-hidden="true"
-            class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-200 fill-cyan-500"
+            className="w-8 h-8 text-gray-200 animate-spin dark:text-gray-200 fill-cyan-500"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -67,7 +110,7 @@ const TaskList = () => {
               fill="currentFill"
             />
           </svg>
-          <span class="sr-only">Loading...</span>
+          <span className="sr-only">Loading...</span>
         </div>
       </div>
     );
@@ -75,84 +118,103 @@ const TaskList = () => {
 
   if (error) {
     return (
-      <div class="flex items-center justify-center p-4 mr-20 ml-20 rounded-lg text-red-600 text-lg bg-red-100  ">
+      <div className="flex items-center justify-center p-4 mr-20 ml-20 rounded-lg text-red-600 text-lg bg-red-100">
         {error}
       </div>
     );
   }
 
   return (
-    <div className="relative overflow-x-auto mr-4 ml-4 shadow-md rounded-lg">
-      <table className="w-full text-sm text-left rtl:text-right  text-gray-500 dark:text-black">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-cyan-500 dark:text-gray-800">
-          <tr>
-            <th scope="col" className="p-4"></th>
-            <th scope="col" className="px-6 py-3">
-              Task
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Created on
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Task Date
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Status
-            </th>
-            <th scope="col" className="px-6 py-3">
-              <div className="flex">
-                <button
-                  onClick={() => handleRemoveTask(task.id)}
-                  className="inline-flex gap-2 ml-2 items-center  text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
-                >
-                  Mark All Completed
-                </button>
-              </div>
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {tasks.map((task) => (
-            <tr
-              key={task._id}
-              className="bg-white border-b dark:bg-gray-300 dark:border-gray-700 "
-            >
-              <td className="w-4 p-4">
-                <div className="flex items-center">
-                  <input
-                    id={`checkbox-table-search-${task.id}`}
-                    type="checkbox"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label
-                    htmlFor={`checkbox-table-search-${task.id}`}
-                    className="sr-only"
-                  >
-                    checkbox
-                  </label>
-                </div>
-              </td>
-              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">
-                {task.task}
-              </td>
-              <td className="px-6 py-4">{formatDateTime(task.createdAt)}</td>
-              <td className="px-6 py-4">{formatDateTime(task.taskDate)}</td>
-              <td className="px-6 py-4">
-                {task.completed ? "Completed" : "Incompleted"}
-              </td>
-              <td className="flex items-center px-6 py-4">
-                <UpdateTask taskData={task} />
-                <button
-                  onClick={() => handleRemoveTask(task.id)}
-                  className="inline-flex gap-2 ml-2 items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-red-600 dark:text-white dark:border-gray-600 dark:hover:bg-red-700 dark:hover:border-gray-700 dark:focus:ring-gray-700"
-                >
-                  Remove
-                </button>
-              </td>
+    <div className="">
+      <div className="flex items-center justify-center mb-4">
+        <button
+          onClick={handleMarkCompleted}
+          className="inline-flex gap-2 ml-2 items-center text-gray-100 bg-green-600 border border-gray-300 focus:outline-none hover:bg-green-700 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+        >
+          Mark All Completed
+        </button>
+        <button
+          onClick={handleMarkIncompleted}
+          className="inline-flex gap-2 ml-2 items-center text-gray-100 bg-red-600 border border-gray-300 focus:outline-none hover:bg-red-700 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+        >
+          Mark All Incomplete
+        </button>
+      </div>
+      <div className="relative overflow-x-auto mr-4 ml-4 shadow-md rounded-lg">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-black">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-cyan-500 dark:text-gray-800">
+            <tr>
+              <th scope="col" className="p-4">
+                <input
+                  type="checkbox"
+                  onChange={(e) =>
+                    setSelectedTasks(
+                      e.target.checked ? tasks.map((task) => task.id) : []
+                    )
+                  }
+                  checked={selectedTasks.length === tasks.length}
+                />
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Task
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Created on
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Task Date
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Status
+              </th>
+              <th scope="col" className="px-6 py-3"></th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {tasks.map((task) => (
+              <tr
+                key={task._id}
+                className="bg-white border-b dark:bg-gray-300 dark:border-gray-700"
+              >
+                <td className="w-4 p-4">
+                  <div className="flex items-center">
+                    <input
+                      id={`checkbox-table-search-${task.id}`}
+                      type="checkbox"
+                      className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      onChange={() => handleSelectTask(task.id)}
+                      checked={selectedTasks.includes(task.id)}
+                    />
+                    <label
+                      htmlFor={`checkbox-table-search-${task.id}`}
+                      className="sr-only"
+                    >
+                      checkbox
+                    </label>
+                  </div>
+                </td>
+                <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">
+                  {task.task}
+                </td>
+                <td className="px-6 py-4">{formatDateTime(task.createdAt)}</td>
+                <td className="px-6 py-4">{formatDateTime(task.taskDate)}</td>
+                <td className="px-6 py-4">
+                  {task.completed ? "Completed" : "Incompleted"}
+                </td>
+                <td className="flex items-center px-6 py-4">
+                  <UpdateTask taskData={task} />
+                  <button
+                    onClick={() => handleRemoveTask(task.id)}
+                    className="inline-flex gap-2 ml-2 items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-red-600 dark:text-white dark:border-gray-600 dark:hover:bg-red-700 dark:hover:border-gray-700 dark:focus:ring-gray-700"
+                  >
+                    Remove
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
