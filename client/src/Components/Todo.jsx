@@ -107,7 +107,7 @@ const Todo = () => {
             onChange={(e) => setTaskDateTime(e.target.value)}
           />
           <button
-            className="bg-cyan-500 text-white px-4 py-2 rounded-r-md hover:bg-blue-600 focus:outline-none"
+            className="bg-cyan-500 text-white px-4 py-2 rounded-r-md hover:bg-cyan-600 focus:outline-none"
             onClick={handleAddTask}
           >
             Add
