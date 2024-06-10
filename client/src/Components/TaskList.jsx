@@ -159,10 +159,10 @@ const TaskList = () => {
         </button>
       </div>
       <div className="relative overflow-x-auto mr-4 ml-4 shadow-md rounded-lg ">
-        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-black">
+        <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-black border  border-gray-400">
           <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-cyan-500 dark:text-gray-800">
             <tr>
-              <th scope="col" className="p-4">
+              <th scope="col" className="p-4 ">
                 <input
                   type="checkbox"
                   onChange={(e) =>
@@ -192,7 +192,7 @@ const TaskList = () => {
             {tasks.map((task) => (
               <tr
                 key={task._id}
-                className={`border-bbg-gray-300 border-gray-700 ${
+                className={`border bg-gray-300 border-gray-400 ${
                   task.completed ? " bg-green-200" : " bg-red-200"
                 }`}
               >

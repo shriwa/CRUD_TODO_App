@@ -25,9 +25,11 @@ app.get("/", (req, res) => {
 
 // Load routes
 const taskRoute = require("./Routes/taskRoute");
+const userRoute = require("./Routes/userRoute");
 
 // Use routes
 app.use("/task", taskRoute);
+app.use("/user", userRoute);
 
 // Start the server
 app.listen(port, (err) => {
