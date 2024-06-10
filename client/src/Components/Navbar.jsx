@@ -5,7 +5,6 @@ import { AuthContext } from "../Context/AuthContext";
 const Navbar = () => {
   const [sticky, setSticky] = useState(false);
   const [open, setOpen] = useState(false);
-
   const { currentUser } = useContext(AuthContext);
 
   const menuLinks = [
