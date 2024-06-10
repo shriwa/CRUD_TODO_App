@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import UpdateTask from "./UpdateTask";
-import { getAllTasks, removeTask, updateTask } from "../API/tasks"; // Assuming you have an updateTask API
+import { getAllTasks, removeTask, updateTask } from "../API/tasks";
 
 const TaskList = () => {
   const [tasks, setTasks] = useState([]);
@@ -147,7 +147,7 @@ const TaskList = () => {
           }`}
           disabled={selectedTasks.length === 0}
         >
-          Mark All Completed
+          Mark Completed
         </button>
         <button
           onClick={handleMarkIncompleted}
@@ -155,7 +155,7 @@ const TaskList = () => {
             selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
           }`}
         >
-          Mark All Incomplete
+          Mark Incomplete
         </button>
       </div>
       <div className="relative overflow-x-auto mr-4 ml-4 shadow-md rounded-lg ">
