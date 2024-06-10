@@ -1,13 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import LogoutButton from "./LogoutButton";
+import { AuthContext } from "../Context/AuthContext";
 
 const Navbar = () => {
   const [sticky, setSticky] = useState(false);
   const [open, setOpen] = useState(false);
 
+  const { currentUser } = useContext(AuthContext);
+
   const menuLinks = [
     { name: "Home", link: "#home" },
     { name: "Account", link: "#account" },
     { name: "Settings", link: "#settings" },
+    currentUser && {
+      name: (
+        <div className="flex items-center justify-center gap-3">
+          {currentUser.email} <LogoutButton />
+        </div>
+      ),
+    },
   ];
 
   useEffect(() => {
@@ -20,10 +31,12 @@ const Navbar = () => {
   return (
     <nav className={`fixed w-full left-0 top-0 z-[999]  bg-cyan-500 `}>
       <div className="flex items-center justify-between ">
-        <div className="mx-7">
-          <h4 className="text-3xl  font-bold text-white lg:text-4xl">
-            CRUD App
-          </h4>
+        <div className="flex items-center justify-between">
+          <div className="mx-7">
+            <h4 className="text-3xl  font-bold text-white lg:text-4xl">
+              CRUD App
+            </h4>
+          </div>
         </div>
         <div
           className={` ${sticky ? ` bg-gray-300` : `bg-gray-300`} 
@@ -53,7 +66,7 @@ const Navbar = () => {
             open ? "right-0" : "right-[-100%]"
           }`}
         >
-          <ul className="flex flex-col justify-center h-full gap-10 py-2 text-lg">
+          <ul className="flex flex-col justify-center mt-10 gap-10 py-2 text-sm">
             {menuLinks?.map((menu, i) => {
               return (
                 <li

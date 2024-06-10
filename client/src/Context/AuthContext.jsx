@@ -40,22 +40,27 @@ export const AuthContextProvider = ({ children }) => {
   // Login
   const login = async (email, password) => {
     try {
-      const { data } = await API.post("/users/login", { email, password });
+      const { data } = await API.post("/user/login", { email, password });
       console.log("Login response", data);
       setCurrentUser({ email: data.email });
       setToken(data.token);
     } catch (error) {
       console.log("Login error", error);
-      throw error;
+      const errorMessage = error.response?.data?.error || "Login failed";
+      if (error.response?.status === 401) {
+        throw new Error("Invalid email or password");
+      } else {
+        throw new Error(errorMessage);
+      }
     }
   };
 
   // Signup
-  const signup = async (email, username, password) => {
+  const signup = async (name, email, password) => {
     try {
-      const { data } = await API.post("/users/signup", {
+      const { data } = await API.post("/user/signup", {
+        name,
         email,
-        username,
         password,
       });
       console.log("Registration response data: ", data);
