@@ -1,12 +1,14 @@
 import React, { useState, useContext } from "react";
 import { addTask } from "../API/tasks";
 import { AuthContext } from "../Context/AuthContext";
+import { RotatingLines } from "react-loader-spinner"; // Assuming you have this spinner
 
 const Todo = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [taskDateTime, setTaskDateTime] = useState("");
   const [alert, setAlert] = useState({ type: "", message: "" });
+  const [loading, setLoading] = useState(false); // Loading state
   const { token } = useContext(AuthContext);
 
   const handleAddTask = async () => {
@@ -33,6 +35,7 @@ const Todo = () => {
     }
 
     try {
+      setLoading(true);
       const res = await addTask(token, {
         task: newTask,
         taskDate: taskDateTime,
@@ -54,6 +57,8 @@ const Todo = () => {
       setTimeout(() => {
         setAlert({ type: "", message: "" });
       }, 8000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,18 +109,35 @@ const Todo = () => {
             placeholder="Add a new task"
             value={newTask}
             onChange={(e) => setNewTask(e.target.value)}
+            disabled={loading}
           />
           <input
             type="datetime-local"
             className="px-3 py-2 border border-gray-300 focus:outline-none"
             value={taskDateTime}
             onChange={(e) => setTaskDateTime(e.target.value)}
+            disabled={loading}
           />
           <button
             className="bg-cyan-500 text-white px-4 py-2 rounded-r-md hover:bg-cyan-600 focus:outline-none"
             onClick={handleAddTask}
+            disabled={loading}
           >
-            Add
+            {loading ? (
+              <RotatingLines
+                visible={true}
+                height="20"
+                width="20"
+                color="white"
+                strokeWidth="5"
+                animationDuration="0.75"
+                ariaLabel="rotating-lines-loading"
+                wrapperStyle={{}}
+                wrapperClass=""
+              />
+            ) : (
+              "Add"
+            )}
           </button>
         </div>
       </div>
