@@ -5,7 +5,7 @@ import { AuthContext } from "../Context/AuthContext";
 const ProtectedRoute = ({ children }) => {
   const { currentUser } = useContext(AuthContext);
 
-  console.log("Checking ProtectedRoute, currentUser: ", currentUser);
+  console.log("CurrentUser: ", currentUser);
 
   if (!currentUser) {
     console.log("No user found, redirecting to login");

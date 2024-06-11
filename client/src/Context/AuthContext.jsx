@@ -29,7 +29,7 @@ export const AuthContextProvider = ({ children }) => {
   }, [currentUser]);
 
   useEffect(() => {
-    console.log("Token updated", token);
+    console.log("Token updated");
     if (token) {
       localStorage.setItem("utoken", token);
     } else {

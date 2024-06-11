@@ -18,7 +18,7 @@ exports.signup = async (req, res) => {
     await user.save();
 
     const token = jwt.sign({ user: { id: user._id } }, "secret_jwt");
-    res.json({ success: true, token });
+    res.json({ success: true, token, email: user.email });
   } catch (error) {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
