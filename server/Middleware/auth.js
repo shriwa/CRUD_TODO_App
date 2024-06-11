@@ -9,7 +9,7 @@ const fetchUser = (req, res, next) => {
   }
 
   try {
-    const data = jwt.verify(token, "secret_ecom");
+    const data = jwt.verify(token, "secret_jwt");
     req.user = data.user;
     next();
   } catch {

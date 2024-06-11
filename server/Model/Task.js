@@ -6,6 +6,7 @@ const taskSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   taskDate: { type: Date, required: true },
   completed: { type: Boolean, default: false },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 module.exports = mongoose.model("Task", taskSchema);

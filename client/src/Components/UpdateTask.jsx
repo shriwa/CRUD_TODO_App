@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { updateTask } from "../API/tasks";
+import { AuthContext } from "../Context/AuthContext";
 
 const UpdateTask = ({ taskData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
   const [successAlert, setSuccessAlert] = useState(false);
   const [failureAlert, setFailureAlert] = useState(false);
+  const { token } = useContext(AuthContext);
 
   useEffect(() => {
     if (taskData) {
@@ -43,7 +45,7 @@ const UpdateTask = ({ taskData }) => {
         };
 
         console.log("Payload to be sent:", payload);
-        const updatedTask = await updateTask(payload.id, payload);
+        const updatedTask = await updateTask(token, payload.id, payload, token);
         console.log("Backend response:", updatedTask);
 
         if (updatedTask.success) {

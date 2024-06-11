@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { addTask } from "../API/tasks";
+import { AuthContext } from "../Context/AuthContext";
 
 const Todo = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [taskDateTime, setTaskDateTime] = useState("");
   const [alert, setAlert] = useState({ type: "", message: "" });
+  const { token } = useContext(AuthContext);
 
   const handleAddTask = async () => {
     if (newTask.trim() === "") {
@@ -31,7 +33,10 @@ const Todo = () => {
     }
 
     try {
-      const res = await addTask({ task: newTask, taskDate: taskDateTime });
+      const res = await addTask(token, {
+        task: newTask,
+        taskDate: taskDateTime,
+      });
       setTasks([...tasks, res.task]);
       setNewTask("");
       setTaskDateTime("");
@@ -56,7 +61,7 @@ const Todo = () => {
     <div className="flex items-center justify-center py-6 mt-20">
       <div className="bg-gray-300 rounded-lg shadow-lg p-6 w-full max-w-2xl">
         <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
-          To-Do{" "}
+          To-Do
         </h1>
         {/* Alert */}
         {alert.type && (

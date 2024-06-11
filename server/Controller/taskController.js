@@ -1,19 +1,14 @@
 const Task = require("../Model/Task");
+const User = require("../Model/User");
 
 // Add a task
 exports.addTask = async (req, res) => {
   try {
-    let tasks = await Task.find({});
-    let id;
-    if (tasks.length > 0) {
-      let last_product_array = tasks.slice(-1);
-      let last_product = last_product_array[0];
-      id = last_product.id + 1;
-    } else {
-      id = 1;
-    }
-
+    const userId = req.user.id;
     const { task, taskDate, completed = false } = req.body;
+
+    let tasks = await Task.find({});
+    let id = tasks.length > 0 ? tasks.slice(-1)[0].id + 1 : 1;
 
     const newTask = new Task({
       id: id,
@@ -21,16 +16,16 @@ exports.addTask = async (req, res) => {
       createdAt: new Date(),
       completed: completed,
       taskDate: new Date(taskDate),
+      user: userId,
     });
-    console.log(newTask);
+
     await newTask.save();
-    console.log("Saved");
-    res.json({
-      success: true,
-      name: req.body.name,
-    });
+
+    await User.findByIdAndUpdate(userId, { $push: { tasks: newTask._id } });
+
+    res.json({ success: true, name: req.body.name });
   } catch (error) {
-    console.error("Error adding product:", error);
+    console.error("Error adding task:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
 };
@@ -38,12 +33,12 @@ exports.addTask = async (req, res) => {
 // Remove a task
 exports.removeTask = async (req, res) => {
   try {
-    const taskId = req.params.id; // Access task ID from URL parameter
-    await Task.findOneAndDelete({ id: taskId }); // Remove task from the database
+    const taskId = req.params.id;
+    await Task.findOneAndDelete({ id: taskId });
     console.log("Task deleted");
     res.json({
       success: true,
-      id: taskId, // Send back the deleted task ID in the response
+      id: taskId,
     });
   } catch (error) {
     console.error("Error removing task:", error);
@@ -51,10 +46,11 @@ exports.removeTask = async (req, res) => {
   }
 };
 
-// Get all task
+// Get all tasks for the authenticated user
 exports.getAllTasks = async (req, res) => {
   try {
-    let tasks = await Task.find({});
+    const userId = req.user.id;
+    let tasks = await Task.find({ user: userId });
     console.log("All tasks fetched");
     res.send(tasks);
   } catch (error) {
@@ -66,11 +62,14 @@ exports.getAllTasks = async (req, res) => {
 // Get a single task
 exports.getSingleTask = async (req, res) => {
   try {
+    const userId = req.user.id;
     const taskId = req.params.id;
-    const task = await Task.findOne({ id: taskId });
+
+    const task = await Task.findOne({ id: taskId, user: userId });
     if (!task) {
       return res.status(404).json({ success: false, error: "Task not found" });
     }
+
     console.log("Task fetched");
     res.json(task);
   } catch (error) {
@@ -82,6 +81,7 @@ exports.getSingleTask = async (req, res) => {
 // Update a task
 exports.updateTask = async (req, res) => {
   try {
+    const userId = req.user.id;
     const taskId = parseInt(req.params.id);
     const updatedData = {
       task: req.body.task,
@@ -89,12 +89,17 @@ exports.updateTask = async (req, res) => {
       completed: req.body.completed,
     };
 
-    const task = await Task.findOneAndUpdate({ id: taskId }, updatedData, {
-      new: true,
-    });
+    const task = await Task.findOneAndUpdate(
+      { id: taskId, user: userId },
+      updatedData,
+      {
+        new: true,
+      }
+    );
     if (!task) {
       return res.status(404).json({ success: false, error: "Task not found" });
     }
+
     console.log("Task updated");
     res.json({
       success: true,

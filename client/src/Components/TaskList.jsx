@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import UpdateTask from "./UpdateTask";
 import { getAllTasks, removeTask, updateTask } from "../API/tasks";
+import { AuthContext } from "../Context/AuthContext";
 
 const TaskList = () => {
+  const { token } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [error, setError] = useState(null);
@@ -11,7 +13,7 @@ const TaskList = () => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const fetchedTasks = await getAllTasks();
+        const fetchedTasks = await getAllTasks(token);
         setTasks(fetchedTasks);
       } catch (error) {
         console.error("Error fetching tasks:", error);
@@ -22,7 +24,7 @@ const TaskList = () => {
     };
 
     fetchTasks();
-  }, []);
+  }, [token]);
 
   const formatDateTime = (dateTimeString) => {
     const options = {
@@ -40,7 +42,7 @@ const TaskList = () => {
   const handleRemoveTask = async (id) => {
     if (window.confirm("Are you sure you want to delete this task?")) {
       try {
-        await removeTask(id);
+        await removeTask(id, token);
         setTasks(tasks.filter((task) => task.id !== id));
         setSelectedTasks(selectedTasks.filter((taskId) => taskId !== id));
       } catch (error) {
@@ -59,11 +61,11 @@ const TaskList = () => {
 
   const handleMarkCompleted = async () => {
     if (
-      window.confirm("Are you sure you want to to mark all tasks as completed")
+      window.confirm("Are you sure you want to mark all tasks as completed?")
     ) {
       try {
         await Promise.all(
-          selectedTasks.map((id) => updateTask(id, { completed: true }))
+          selectedTasks.map((id) => updateTask(id, { completed: true }, token))
         );
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
@@ -82,11 +84,11 @@ const TaskList = () => {
 
   const handleMarkIncompleted = async () => {
     if (
-      window.confirm("Are you sure you want to mark all tasks as Icompleted?")
+      window.confirm("Are you sure you want to mark all tasks as incomplete?")
     ) {
       try {
         await Promise.all(
-          selectedTasks.map((id) => updateTask(id, { completed: false }))
+          selectedTasks.map((id) => updateTask(id, { completed: false }, token))
         );
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
@@ -221,7 +223,7 @@ const TaskList = () => {
                 <td className="px-6 py-4">{formatDateTime(task.createdAt)}</td>
                 <td className="px-6 py-4">{formatDateTime(task.taskDate)}</td>
                 <td className="px-6 py-4">
-                  {task.completed ? "Completed" : "Incompleted"}
+                  {task.completed ? "Completed" : "Incomplete"}
                 </td>
                 <td className="flex items-center px-6 py-4">
                   <UpdateTask taskData={task} />

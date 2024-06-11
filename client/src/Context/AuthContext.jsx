@@ -1,5 +1,4 @@
-import React, { createContext, useState } from "react";
-import { useEffect } from "react";
+import React, { createContext, useState, useEffect } from "react";
 import API from "../API";
 
 export const AuthContext = createContext();
@@ -64,10 +63,8 @@ export const AuthContextProvider = ({ children }) => {
         password,
       });
       console.log("Registration response data: ", data);
-
       setCurrentUser({ email: data.email });
       setToken(data.token);
-
       return true;
     } catch (error) {
       console.error("Registration error: ", error);
@@ -78,19 +75,14 @@ export const AuthContextProvider = ({ children }) => {
   // Logout
   const logout = () => {
     console.log("Logging out");
-
     setCurrentUser(null);
     setToken(null);
-
     localStorage.removeItem("user");
     localStorage.removeItem("utoken");
   };
 
-  // Return the AuthContext provider with the context value
   return (
-    <AuthContext.Provider
-      value={{ currentUser, setCurrentUser, login, logout, signup }}
-    >
+    <AuthContext.Provider value={{ currentUser, token, login, logout, signup }}>
       {children}
     </AuthContext.Provider>
   );

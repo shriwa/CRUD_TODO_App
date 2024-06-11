@@ -1,9 +1,11 @@
 import API from ".";
 
 // Get all tasks
-export const getAllTasks = async () => {
+export const getAllTasks = async (token) => {
   try {
-    const res = await API.get("/task/getalltask");
+    const res = await API.get("/task/getalltask", {
+      headers: { auth_token: token },
+    });
     return res.data;
   } catch (error) {
     console.error("Fetching all tasks failed", error);
@@ -12,9 +14,11 @@ export const getAllTasks = async () => {
 };
 
 // Add a task
-export const addTask = async (taskData) => {
+export const addTask = async (token, taskData) => {
   try {
-    const res = await API.post("/task/addtask", taskData);
+    const res = await API.post("/task/addtask", taskData, {
+      headers: { auth_token: token },
+    });
     return res.data;
   } catch (error) {
     console.error("Adding task failed", error);
@@ -23,9 +27,11 @@ export const addTask = async (taskData) => {
 };
 
 // Remove a task
-export const removeTask = async (id) => {
+export const removeTask = async (id, token) => {
   try {
-    const res = await API.delete(`/task/removetask/${id}`);
+    const res = await API.delete(`/task/removetask/${id}`, {
+      headers: { auth_token: token },
+    });
     return res.data;
   } catch (error) {
     console.error("Removing task failed", error);
@@ -34,9 +40,11 @@ export const removeTask = async (id) => {
 };
 
 // Get a single task
-export const getSingleTask = async (id) => {
+export const getSingleTask = async (id, token) => {
   try {
-    const res = await API.get(`/task/getsingletask/${id}`);
+    const res = await API.get(`/task/getsingletask/${id}`, {
+      headers: { auth_token: token },
+    });
     return res.data;
   } catch (error) {
     console.error("Fetching single task failed", error);
@@ -45,9 +53,11 @@ export const getSingleTask = async (id) => {
 };
 
 // Update a task
-export const updateTask = async (id, payload) => {
+export const updateTask = async (token, id, payload) => {
   try {
-    const res = await API.put(`/task/updatetask/${id}`, payload);
+    const res = await API.put(`/task/updatetask/${id}`, payload, {
+      headers: { auth_token: token },
+    });
     return res.data;
   } catch (error) {
     console.error("Updating task failed", error);
