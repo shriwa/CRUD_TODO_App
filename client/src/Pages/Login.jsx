@@ -1,26 +1,38 @@
 import React, { useContext, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Context/AuthContext";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+const validationSchema = yup.object().shape({
+  email: yup
+    .string()
+    .required("Email is required")
+    .email("Invalid email address"),
+  password: yup.string().required("Password is required"),
+});
 
 const Login = () => {
-  const [formData, setFormData] = useState({ email: "", password: "" });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const { login } = useContext(AuthContext);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setLoading(true);
     setError(null);
     try {
-      await login(formData.email, formData.password);
+      await login(data.email, data.password);
       navigate("/");
     } catch (error) {
       setError(error.message);
@@ -30,18 +42,18 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <h1 className="mt-10 text-center text-3xl font-bold leading-9 tracking-tight text-gray-900">
+    <div className="flex min-h-full flex-col justify-center  px-6 py-12 lg:px-8">
+      <div className="sm:mx-auto sm:w-full sm:max-w-sm bg-cyan-600 rounded-lg">
+        <h1 className="mt-5 text-center text-3xl font-bold leading-9 tracking-tight text-gray-200">
           CRUD Todo App
         </h1>
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
+        <h2 className="mt-5 pb-3 text-center text-2xl font-bold leading-9 tracking-tight text-gray-200">
           Login
         </h2>
       </div>
 
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6" onSubmit={handleLogin}>
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label
               htmlFor="email"
@@ -54,11 +66,16 @@ const Login = () => {
                 id="email"
                 name="email"
                 type="email"
-                value={formData.email}
-                onChange={handleChange}
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                {...register("email")}
+                className={`block border border-grey-light w-full p-2 rounded  ${
+                  errors.email ? "border-red-500" : ""
+                }`}
               />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -70,25 +87,22 @@ const Login = () => {
               >
                 Password
               </label>
-              <div className="text-sm">
-                <a
-                  href="#"
-                  className="font-semibold text-indigo-600 hover:text-indigo-500"
-                >
-                  Forgot password?
-                </a>
-              </div>
             </div>
             <div className="mt-2">
               <input
                 id="password"
                 name="password"
                 type="password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                {...register("password")}
+                className={`block border border-grey-light w-full p-2 rounded ${
+                  errors.password ? "border-red-500" : ""
+                }`}
               />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.password.message}
+                </p>
+              )}
             </div>
           </div>
 
@@ -96,7 +110,7 @@ const Login = () => {
             <button
               type="submit"
               disabled={loading}
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              className="flex w-full justify-center rounded-md bg-cyan-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-cyan-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
               {loading ? "Logging in..." : "Login"}
             </button>
@@ -124,12 +138,12 @@ const Login = () => {
 
         <p className="mt-5 text-center text-sm text-gray-500">
           Don't have an account?
-          <a
-            href="/signup"
-            className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          <Link
+            to="/signup"
+            className="font-semibold leading-6 text-cyan-600 hover:text-cyan-500"
           >
             Signup
-          </a>
+          </Link>
         </p>
       </div>
     </div>

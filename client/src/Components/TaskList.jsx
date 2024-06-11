@@ -65,7 +65,9 @@ const TaskList = () => {
     ) {
       try {
         await Promise.all(
-          selectedTasks.map((id) => updateTask(id, { completed: true }, token))
+          selectedTasks.map((id) =>
+            updateTask(token, id, { completed: true }, token)
+          )
         );
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
@@ -88,7 +90,9 @@ const TaskList = () => {
     ) {
       try {
         await Promise.all(
-          selectedTasks.map((id) => updateTask(id, { completed: false }, token))
+          selectedTasks.map((id) =>
+            updateTask(token, id, { completed: false }, token)
+          )
         );
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
