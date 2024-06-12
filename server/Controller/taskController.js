@@ -1,5 +1,6 @@
 const Task = require("../Model/Task");
 const User = require("../Model/User");
+const slugify = require("slugify");
 
 // Add a task
 exports.addTask = async (req, res) => {
