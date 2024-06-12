@@ -1,6 +1,5 @@
 const Task = require("../Model/Task");
 const User = require("../Model/User");
-const slugify = require("slugify");
 
 // Add a task
 exports.addTask = async (req, res) => {
@@ -8,11 +7,7 @@ exports.addTask = async (req, res) => {
     const userId = req.user.id;
     const { task, taskDate, completed = false } = req.body;
 
-    let tasks = await Task.find({});
-    let id = tasks.length > 0 ? tasks.slice(-1)[0].id + 1 : 1;
-
     const newTask = new Task({
-      id: id,
       task: task,
       createdAt: new Date(),
       completed: completed,
@@ -21,10 +16,9 @@ exports.addTask = async (req, res) => {
     });
 
     await newTask.save();
-
     await User.findByIdAndUpdate(userId, { $push: { tasks: newTask._id } });
 
-    res.json({ success: true, name: req.body.name });
+    res.json({ success: true, task: newTask });
   } catch (error) {
     console.error("Error adding task:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
@@ -35,12 +29,13 @@ exports.addTask = async (req, res) => {
 exports.removeTask = async (req, res) => {
   try {
     const taskId = req.params.id;
-    await Task.findOneAndDelete({ id: taskId });
+    const task = await Task.findByIdAndDelete(taskId);
+    if (!task) {
+      return res.status(404).json({ success: false, error: "Task not found" });
+    }
+
     console.log("Task deleted");
-    res.json({
-      success: true,
-      id: taskId,
-    });
+    res.json({ success: true, id: taskId });
   } catch (error) {
     console.error("Error removing task:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
@@ -53,7 +48,7 @@ exports.getAllTasks = async (req, res) => {
     const userId = req.user.id;
     let tasks = await Task.find({ user: userId });
     console.log("All tasks fetched");
-    res.send(tasks);
+    res.json(tasks);
   } catch (error) {
     console.error("Error fetching all tasks:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });
@@ -66,7 +61,7 @@ exports.getSingleTask = async (req, res) => {
     const userId = req.user.id;
     const taskId = req.params.id;
 
-    const task = await Task.findOne({ id: taskId, user: userId });
+    const task = await Task.findOne({ _id: taskId, user: userId });
     if (!task) {
       return res.status(404).json({ success: false, error: "Task not found" });
     }
@@ -83,7 +78,8 @@ exports.getSingleTask = async (req, res) => {
 exports.updateTask = async (req, res) => {
   try {
     const userId = req.user.id;
-    const taskId = parseInt(req.params.id);
+    const taskId = req.params.id;
+
     const updatedData = {
       task: req.body.task,
       taskDate: req.body.taskDate,
@@ -91,21 +87,16 @@ exports.updateTask = async (req, res) => {
     };
 
     const task = await Task.findOneAndUpdate(
-      { id: taskId, user: userId },
+      { _id: taskId, user: userId },
       updatedData,
-      {
-        new: true,
-      }
+      { new: true }
     );
     if (!task) {
       return res.status(404).json({ success: false, error: "Task not found" });
     }
 
     console.log("Task updated");
-    res.json({
-      success: true,
-      task: task,
-    });
+    res.json({ success: true, task: task });
   } catch (error) {
     console.error("Error updating task:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });

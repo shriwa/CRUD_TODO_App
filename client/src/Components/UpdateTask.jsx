@@ -38,14 +38,13 @@ const UpdateTask = ({ taskData }) => {
     if (window.confirm("Are you sure you want to update the task?")) {
       try {
         const payload = {
-          id: formData.id,
           task: formData.task,
           taskDate: formData.taskDate,
           completed: formData.status === "completed",
         };
 
         console.log("Payload to be sent:", payload);
-        const updatedTask = await updateTask(token, payload.id, payload, token);
+        const updatedTask = await updateTask(token, formData._id, payload);
         console.log("Backend response:", updatedTask);
 
         if (updatedTask.success) {

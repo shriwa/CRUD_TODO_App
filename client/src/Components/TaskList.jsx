@@ -44,7 +44,7 @@ const TaskList = () => {
     if (window.confirm("Are you sure you want to delete this task?")) {
       try {
         await removeTask(id, token);
-        setTasks(tasks.filter((task) => task.id !== id));
+        setTasks(tasks.filter((task) => task._id !== id));
         setSelectedTasks(selectedTasks.filter((taskId) => taskId !== id));
       } catch (error) {
         console.error("Error removing task:", error);
@@ -72,7 +72,7 @@ const TaskList = () => {
         );
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
-            selectedTasks.includes(task.id)
+            selectedTasks.includes(task._id)
               ? { ...task, completed: true }
               : task
           )
@@ -97,7 +97,7 @@ const TaskList = () => {
         );
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
-            selectedTasks.includes(task.id)
+            selectedTasks.includes(task._id)
               ? { ...task, completed: false }
               : task
           )
@@ -166,7 +166,7 @@ const TaskList = () => {
                   type="checkbox"
                   onChange={(e) =>
                     setSelectedTasks(
-                      e.target.checked ? tasks.map((task) => task.id) : []
+                      e.target.checked ? tasks.map((task) => task._id) : []
                     )
                   }
                   checked={selectedTasks.length === tasks.length}
@@ -198,14 +198,14 @@ const TaskList = () => {
                 <td className="w-4 p-4">
                   <div className="flex items-center">
                     <input
-                      id={`checkbox-table-search-${task.id}`}
+                      id={`checkbox-table-search-${task._id}`}
                       type="checkbox"
                       className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                      onChange={() => handleSelectTask(task.id)}
-                      checked={selectedTasks.includes(task.id)}
+                      onChange={() => handleSelectTask(task._id)}
+                      checked={selectedTasks.includes(task._id)}
                     />
                     <label
-                      htmlFor={`checkbox-table-search-${task.id}`}
+                      htmlFor={`checkbox-table-search-${task._id}`}
                       className="sr-only"
                     >
                       checkbox
@@ -225,7 +225,7 @@ const TaskList = () => {
                 <td className="flex items-center px-6 py-4">
                   <UpdateTask taskData={task} />
                   <button
-                    onClick={() => handleRemoveTask(task.id)}
+                    onClick={() => handleRemoveTask(task._id)}
                     className="inline-flex gap-2 ml-2 items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-red-600 dark:text-white dark:border-gray-600 dark:hover:bg-red-700 dark:hover:border-gray-700 dark:focus:ring-gray-700"
                   >
                     Remove
