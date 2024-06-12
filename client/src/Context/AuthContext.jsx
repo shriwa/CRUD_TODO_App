@@ -1,4 +1,5 @@
 import React, { createContext, useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 import API from "../API";
 
 export const AuthContext = createContext();
@@ -19,7 +20,6 @@ export const AuthContextProvider = ({ children }) => {
   });
 
   useEffect(() => {
-    console.log("Current user updated", currentUser);
     if (currentUser) {
       localStorage.setItem("user", JSON.stringify(currentUser));
     } else {
@@ -28,7 +28,6 @@ export const AuthContextProvider = ({ children }) => {
   }, [currentUser]);
 
   useEffect(() => {
-    console.log("Token updated");
     if (token) {
       localStorage.setItem("utoken", token);
     } else {
@@ -36,15 +35,12 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [token]);
 
-  // Login
   const login = async (email, password) => {
     try {
       const { data } = await API.post("/user/login", { email, password });
-      console.log("Login response", data);
-      setCurrentUser({ email: data.email });
+      setCurrentUser({ email: data.email, name: data.name });
       setToken(data.token);
     } catch (error) {
-      console.log("Login error", error);
       const errorMessage = error.response?.data?.error || "Login failed";
       if (error.response?.status === 401) {
         throw new Error("Invalid email or password");
@@ -54,7 +50,6 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
-  // Signup
   const signup = async (name, email, password) => {
     try {
       const { data } = await API.post("/user/signup", {
@@ -62,24 +57,40 @@ export const AuthContextProvider = ({ children }) => {
         email,
         password,
       });
-      console.log("Registration response data: ", data);
-      setCurrentUser({ email: data.email });
+      setCurrentUser({ email: data.email, name: data.name });
       setToken(data.token);
       return true;
     } catch (error) {
-      console.error("Registration error: ", error);
       throw error;
     }
   };
 
-  // Logout
   const logout = () => {
-    console.log("Logging out");
     setCurrentUser(null);
     setToken(null);
     localStorage.removeItem("user");
     localStorage.removeItem("utoken");
   };
+
+  const checkTokenExpiration = () => {
+    if (token) {
+      try {
+        const decodedToken = jwtDecode(token);
+        if (decodedToken.exp * 1000 < Date.now()) {
+          logout();
+          alert("Session expired. Please log in again.");
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  };
+
+  useEffect(() => {
+    checkTokenExpiration();
+    const interval = setInterval(checkTokenExpiration, 3600000);
+    return () => clearInterval(interval);
+  }, [token]);
 
   return (
     <AuthContext.Provider value={{ currentUser, token, login, logout, signup }}>

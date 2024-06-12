@@ -12,6 +12,13 @@ const port = process.env.PORT || 4000;
 app.use(express.json());
 app.use(cors());
 
+// CORS configuration
+const corsOptions = {
+  origin: "*",
+};
+
+app.use(cors(corsOptions));
+
 // Connect to MongoDB
 mongoose
   .connect(process.env.MONGO_DB)

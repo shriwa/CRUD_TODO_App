@@ -1,8 +1,10 @@
-const User = require("../Model/User");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const User = require("../Model/User");
 
 const saltRounds = 10;
+const jwtSecret = "secret_jwt";
+const jwtExpiry = "2h";
 
 exports.signup = async (req, res) => {
   try {
@@ -23,8 +25,10 @@ exports.signup = async (req, res) => {
 
     await user.save();
 
-    const token = jwt.sign({ user: { id: user._id } }, "secret_jwt");
-    res.json({ success: true, token, email: user.email });
+    const token = jwt.sign({ user: { id: user._id } }, jwtSecret, {
+      expiresIn: jwtExpiry,
+    });
+    res.json({ success: true, token, email: user.email, name: user.name });
   } catch (error) {
     res.status(500).json({ success: false, error: "Internal Server Error" });
   }
@@ -39,8 +43,10 @@ exports.login = async (req, res) => {
         user.password
       );
       if (passwordMatch) {
-        const token = jwt.sign({ user: { id: user._id } }, "secret_jwt");
-        res.json({ success: true, token, email: user.email });
+        const token = jwt.sign({ user: { id: user._id } }, jwtSecret, {
+          expiresIn: jwtExpiry,
+        });
+        res.json({ success: true, token, email: user.email, name: user.name });
       } else {
         res
           .status(401)

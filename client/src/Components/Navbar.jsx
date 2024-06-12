@@ -14,7 +14,7 @@ const Navbar = () => {
     currentUser && {
       name: (
         <div className="flex items-center justify-center gap-3">
-          {currentUser.email} <LogoutButton />
+          {currentUser.name} <LogoutButton />
         </div>
       ),
     },

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const jwtSecret = "secret_jwt";
 
 const fetchUser = (req, res, next) => {
   const token = req.header("auth_token");
@@ -9,13 +10,13 @@ const fetchUser = (req, res, next) => {
   }
 
   try {
-    const data = jwt.verify(token, "secret_jwt");
+    const data = jwt.verify(token, jwtSecret);
     req.user = data.user;
     next();
-  } catch {
+  } catch (error) {
     return res
       .status(401)
-      .send({ error: "Please authenticate using a valid token" });
+      .send({ error: "Token expired or invalid. Please authenticate again." });
   }
 };
 

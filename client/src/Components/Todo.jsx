@@ -1,14 +1,14 @@
 import React, { useState, useContext } from "react";
 import { addTask } from "../API/tasks";
 import { AuthContext } from "../Context/AuthContext";
-import { RotatingLines } from "react-loader-spinner"; // Assuming you have this spinner
+import { RotatingLines } from "react-loader-spinner";
 
 const Todo = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [taskDateTime, setTaskDateTime] = useState("");
   const [alert, setAlert] = useState({ type: "", message: "" });
-  const [loading, setLoading] = useState(false); // Loading state
+  const [loading, setLoading] = useState(false);
   const { token } = useContext(AuthContext);
 
   const handleAddTask = async () => {
@@ -64,7 +64,7 @@ const Todo = () => {
 
   return (
     <div className="flex items-center justify-center py-6 mt-20">
-      <div className="bg-gray-300 rounded-lg shadow-lg p-6 w-full max-w-2xl">
+      <div className="bg-gray-300 rounded-lg shadow-lg p-6 w-full md:max-w-2xl">
         <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           To-Do
         </h1>
