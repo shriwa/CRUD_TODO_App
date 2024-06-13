@@ -63,15 +63,16 @@ const Todo = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 w-full flex items-center justify-center py-6 mt-20 z-100">
+    <div className=" w-full flex items-center justify-center py-6 mt-16  z-100">
       <div className="bg-gray-300 rounded-lg shadow-lg p-6 w-full md:max-w-2xl">
         <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           To-Do
         </h1>
+
         {/* Alert */}
         {alert.type && (
           <div
-            className={`flex items-center p-4 mb-4 rounded-lg ${
+            className={`flex items-center p-3 mb-4 rounded-lg ${
               alert.type === "success"
                 ? "text-green-800 bg-green-50"
                 : alert.type === "failure"
@@ -102,6 +103,7 @@ const Todo = () => {
             </button>
           </div>
         )}
+
         <div className="flex mb-4">
           <input
             type="text"

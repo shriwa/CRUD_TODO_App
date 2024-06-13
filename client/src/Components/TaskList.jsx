@@ -146,7 +146,7 @@ const TaskList = () => {
   if (error) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <div className="py-2 px-7  mt-8 ml-10 mr-10 rounded-xl  animate-pulse text-red-600 text-md bg-red-100">
+        <div className="py-2 px-7 mt-8 ml-10 mr-10 rounded-xl animate-pulse text-red-600 text-md bg-red-100">
           {error}
         </div>
       </div>
@@ -154,8 +154,8 @@ const TaskList = () => {
   }
 
   return (
-    <div className="fixed w-full top-80">
-      <div className="fixed top-72 w-full flex items-center justify-center gap-5 mb-4">
+    <div className="w-full mt-22">
+      <div className=" w-full flex items-center justify-center gap-5 mb-4  py-2">
         {/* Sort Button */}
         <button
           id="dropdownRadioButton"
@@ -198,7 +198,7 @@ const TaskList = () => {
           <div className="relative">
             <div className="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
               <svg
-                className="w-4 h-4 text-gray-900 "
+                className="w-4 h-4 text-gray-900"
                 aria-hidden="true"
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -216,14 +216,14 @@ const TaskList = () => {
             <input
               type="text"
               id="table-search-users"
-              className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-200 hover:bg-gray-100  focus:ring-blue-500 focus:border-blue-500 "
+              className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-200 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Search for users"
               onChange={(e) => handleFilter(e.target.value)}
             />
           </div>
         </div>
 
-        {/* Mark Button*/}
+        {/* Mark Button */}
         <button
           onClick={handleMarkCompleted}
           className={`inline-flex gap-2 items-center text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
@@ -234,10 +234,10 @@ const TaskList = () => {
           Mark Completed
         </button>
 
-        {/* Unmark Button*/}
+        {/* Unmark Button */}
         <button
           onClick={handleMarkIncompleted}
-          className={`inline-flex gap-2 items-center  text-gray-100 bg-red-700 border border-gray-300 focus:outline-none hover:bg-red-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
+          className={`inline-flex gap-2 items-center text-gray-100 bg-red-700 border border-gray-300 focus:outline-none hover:bg-red-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
             selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
           }`}
           disabled={selectedTasks.length === 0}
@@ -247,9 +247,9 @@ const TaskList = () => {
       </div>
 
       {/* Task Table */}
-      <div className="relative overflow-x-auto mr-4 ml-4 rounded-lg mt-6">
-        <div className="h-72">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-black border border-gray-400">
+      <div className=" overflow-x-auto mx-4 mt-4 rounded-lg">
+        <div className="h-72 overflow-auto">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-400">
             <thead className="sticky top-0 bg-gray-300 text-gray-800">
               <tr>
                 <th scope="col" className="p-4">
@@ -283,10 +283,10 @@ const TaskList = () => {
                 <tr
                   key={task._id}
                   className={`border bg-gray-300 border-gray-400 ${
-                    task.completed ? " bg-green-200" : " bg-red-200"
+                    task.completed ? "bg-green-200" : "bg-red-200"
                   }`}
                 >
-                  <td className="w-4 p-4">
+                  <td className="w-4 p-3">
                     <div className="flex items-center">
                       <input
                         id={`checkbox-table-search-${task._id}`}
@@ -303,22 +303,21 @@ const TaskList = () => {
                       </label>
                     </div>
                   </td>
-                  <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-black">
+                  <td className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
                     {task.task}
                   </td>
                   <td className="px-6 py-4">
                     {formatDateTime(task.createdAt)}
                   </td>
-                  <td className="px-6 py-4">{formatDateTime(task.taskDate)}</td>
-                  <td className="px-6 py-4">
+                  <td className="px-6 py-3">{formatDateTime(task.taskDate)}</td>
+                  <td className="px-6 py-3">
                     {task.completed ? "Completed" : "Incomplete"}
                   </td>
-
-                  <td className="flex items-center px-6 py-4">
+                  <td className="flex items-center px-6 py-3">
                     <UpdateTask taskData={task} />
                     <button
                       onClick={() => handleRemoveTask(task._id)}
-                      className="inline-flex gap-2 ml-2 items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-red-600 dark:text-white dark:border-gray-600 dark:hover:bg-red-700 dark:hover:border-gray-700 dark:focus:ring-gray-700"
+                      className="inline-flex gap-2 ml-2 items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
                     >
                       Remove
                     </button>
@@ -327,49 +326,42 @@ const TaskList = () => {
               ))}
             </tbody>
           </table>
-
-          {/* */}
-
-          {/* Pagination*/}
-          <nav
-            className="flex items-center flex-column flex-wrap md:flex-row justify-between pt-4"
-            aria-label="Table navigation"
-          >
-            <span className="text-sm font-normal text-gray-500  mb-4 md:mb-0 block w-full md:inline md:w-auto">
-              Showing <span className="font-semibold text-gray-900">1-10</span>{" "}
-              of <span className="font-semibold text-gray-900">1000</span>
-            </span>
-            <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-800 bg-gray-300 border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
-                >
-                  Previous
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-5800 bg-gray-300 border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-                >
-                  1
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 "
-                >
-                  Next
-                </a>
-              </li>
-            </ul>
-          </nav>
-          {/* */}
         </div>
       </div>
-      {/* */}
+
+      {/* Pagination */}
+      <nav className="flex items-center flex-col md:flex-row justify-between mx-10 pt-4">
+        <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
+          Showing <span className="font-semibold text-gray-900">1-10</span> of{" "}
+          <span className="font-semibold text-gray-900">1000</span>
+        </span>
+        <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
+          <li>
+            <a
+              href="#"
+              className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-800 bg-gray-300 border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
+            >
+              Previous
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+            >
+              1
+            </a>
+          </li>
+          <li>
+            <a
+              href="#"
+              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
+            >
+              Next
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
   );
 };
