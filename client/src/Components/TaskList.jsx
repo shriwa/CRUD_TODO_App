@@ -155,95 +155,98 @@ const TaskList = () => {
 
   return (
     <div className="w-full mt-22">
-      <div className=" w-full flex items-center justify-center gap-5 mb-4  py-2">
-        {/* Sort Button */}
-        <button
-          id="dropdownRadioButton"
-          data-dropdown-toggle="dropdownRadio"
-          className="inline-flex items-center text-gray-900 bg-gray-200 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
-          type="button"
-        >
-          <svg
-            className="w-3 h-3 text-gray-500 dark:text-gray-400 me-3"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="currentColor"
-            viewBox="0 0 20 20"
+      <div className="md:flex md:w-full justify-center items-center grid mr-10 ml-10 gap-5 mb-4 py-2 ">
+        <div className="flex items-center justify-center gap-4 ">
+          {/* Sort Button */}
+          <button
+            id="dropdownRadioButton"
+            data-dropdown-toggle="dropdownRadio"
+            className="inline-flex items-center w-20 text-gray-900 bg-gray-200 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-3"
+            type="button"
           >
-            <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
-          </svg>
-          Last 30 days
-          <svg
-            className="w-2.5 h-2.5 ms-2.5"
-            aria-hidden="true"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 10 6"
-          >
-            <path
-              stroke="currentColor"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="m1 1 4 4 4-4"
-            />
-          </svg>
-        </button>
+            <svg
+              className="w-3 h-3 text-gray-800 me-3"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+            >
+              <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
+            </svg>
 
-        {/* Search Button */}
-        <div>
-          <label htmlFor="table-search" className="sr-only">
-            Search
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
-              <svg
-                className="w-4 h-4 text-gray-900"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                />
-              </svg>
+            <svg
+              className="w-2.5 h-2.5 ms-2.5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 10 6"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m1 1 4 4 4-4"
+              />
+            </svg>
+          </button>
+
+          {/* Search Button */}
+          <div>
+            <label htmlFor="table-search" className="sr-only">
+              Search
+            </label>
+            <div className="relative">
+              <div className="absolute inset-y-0 rtl:inset-r-0 start-0 flex items-center ps-3 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-gray-900"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                  />
+                </svg>
+              </div>
+              <input
+                type="text"
+                id="table-search-users"
+                className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-60 md:w-80 bg-gray-200 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search for tasks"
+                onChange={(e) => handleFilter(e.target.value)}
+              />
             </div>
-            <input
-              type="text"
-              id="table-search-users"
-              className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-80 bg-gray-200 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Search for users"
-              onChange={(e) => handleFilter(e.target.value)}
-            />
           </div>
         </div>
+        <div className=" flex items-center justify-center gap-4">
+          {/* Mark Button */}
+          <button
+            onClick={handleMarkCompleted}
+            className={`inline-flex gap-2 w-22 items-center justify-center text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
+              selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={selectedTasks.length === 0}
+          >
+            Mark Completed
+          </button>
 
-        {/* Mark Button */}
-        <button
-          onClick={handleMarkCompleted}
-          className={`inline-flex gap-2 items-center text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
-            selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={selectedTasks.length === 0}
-        >
-          Mark Completed
-        </button>
-
-        {/* Unmark Button */}
-        <button
-          onClick={handleMarkIncompleted}
-          className={`inline-flex gap-2 items-center text-gray-100 bg-red-700 border border-gray-300 focus:outline-none hover:bg-red-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
-            selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          disabled={selectedTasks.length === 0}
-        >
-          Mark Incomplete
-        </button>
+          {/* Unmark Button */}
+          <button
+            onClick={handleMarkIncompleted}
+            className={`inline-flex gap-2 w-22 items-center justify-center text-gray-100 bg-red-700 border border-gray-300 focus:outline-none hover:bg-red-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
+              selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
+            }`}
+            disabled={selectedTasks.length === 0}
+          >
+            Mark Incomplete
+          </button>
+        </div>
       </div>
 
       {/* Task Table */}
@@ -282,7 +285,7 @@ const TaskList = () => {
               {tasks.map((task) => (
                 <tr
                   key={task._id}
-                  className={`border bg-gray-300 border-gray-400 ${
+                  className={`border bg-gray-300 border-gray-400 text-gray-900 ${
                     task.completed ? "bg-green-200" : "bg-red-200"
                   }`}
                 >
@@ -291,7 +294,7 @@ const TaskList = () => {
                       <input
                         id={`checkbox-table-search-${task._id}`}
                         type="checkbox"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-900 dark:focus:ring-blue-900 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-800"
                         onChange={() => handleSelectTask(task._id)}
                         checked={selectedTasks.includes(task._id)}
                       />
@@ -317,7 +320,7 @@ const TaskList = () => {
                     <UpdateTask taskData={task} />
                     <button
                       onClick={() => handleRemoveTask(task._id)}
-                      className="inline-flex gap-2 ml-2 items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5"
+                      className="inline-flex gap-2 ml-2 items-center text-gray-100 bg-red-600 border border-gray-300 focus:outline-none hover:bg-red-500 focus:ring-2 focus:ring-red-900 font-medium rounded-lg text-sm px-3 py-1.5"
                     >
                       Remove
                     </button>
@@ -330,7 +333,7 @@ const TaskList = () => {
       </div>
 
       {/* Pagination */}
-      <nav className="flex items-center flex-col md:flex-row justify-between mx-10 pt-4">
+      <nav className="flex items-center  md:flex-row justify-center gap-20 mx-10 pt-4">
         <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
           Showing <span className="font-semibold text-gray-900">1-10</span> of{" "}
           <span className="font-semibold text-gray-900">1000</span>

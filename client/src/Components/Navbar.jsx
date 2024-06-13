@@ -13,7 +13,7 @@ const Navbar = () => {
     { name: "Settings", link: "#settings" },
     currentUser && {
       name: (
-        <div className="flex items-center justify-center gap-3">
+        <div className="md:flex items-center justify-center gap-3 grid text-gray-600">
           {currentUser.name} <LogoutButton />
         </div>
       ),
