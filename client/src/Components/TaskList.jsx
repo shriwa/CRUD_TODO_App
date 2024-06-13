@@ -129,7 +129,7 @@ const TaskList = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center ">
         <RotatingLines
           visible={true}
           height="56"
@@ -145,7 +145,7 @@ const TaskList = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen">
+      <div className="flex items-center justify-center">
         <div className="py-2 px-7 mt-8 ml-10 mr-10 rounded-xl animate-pulse text-red-600 text-md bg-red-100">
           {error}
         </div>
@@ -154,14 +154,14 @@ const TaskList = () => {
   }
 
   return (
-    <div className="w-full mt-22">
+    <div className="w-full mt-22 overflow-hidden">
       <div className="md:flex md:w-full justify-center items-center grid mr-10 ml-10 gap-5 mb-4 py-2 ">
         <div className="flex items-center justify-center gap-4 ">
           {/* Sort Button */}
           <button
             id="dropdownRadioButton"
             data-dropdown-toggle="dropdownRadio"
-            className="inline-flex items-center w-20 text-gray-900 bg-gray-200 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-3"
+            className="inline-flex shadow-md items-center w-20 text-gray-900 bg-gray-200 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-3"
             type="button"
           >
             <svg
@@ -217,7 +217,7 @@ const TaskList = () => {
               <input
                 type="text"
                 id="table-search-users"
-                className="block p-2 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg w-60 md:w-80 bg-gray-200 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                className="block p-2 ps-10 text-sm shadow-md text-gray-900 border border-gray-300 rounded-lg w-60 md:w-80 bg-gray-200 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Search for tasks"
                 onChange={(e) => handleFilter(e.target.value)}
               />
@@ -228,7 +228,7 @@ const TaskList = () => {
           {/* Mark Button */}
           <button
             onClick={handleMarkCompleted}
-            className={`inline-flex gap-2 w-22 items-center justify-center text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
+            className={`inline-flex gap-2 w-22 shadow-md  items-center justify-center text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
               selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={selectedTasks.length === 0}
@@ -239,7 +239,7 @@ const TaskList = () => {
           {/* Unmark Button */}
           <button
             onClick={handleMarkIncompleted}
-            className={`inline-flex gap-2 w-22 items-center justify-center text-gray-100 bg-red-700 border border-gray-300 focus:outline-none hover:bg-red-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
+            className={`inline-flex gap-2 w-22 shadow-md  items-center justify-center text-gray-100 bg-red-700 border border-gray-300 focus:outline-none hover:bg-red-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
               selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={selectedTasks.length === 0}
@@ -251,8 +251,8 @@ const TaskList = () => {
 
       {/* Task Table */}
       <div className=" overflow-x-auto mx-4 mt-4 rounded-lg">
-        <div className="h-72 overflow-auto">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-400">
+        <div className="h-72 overflow-auto ">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-400 ">
             <thead className="sticky top-0 bg-gray-300 text-gray-800">
               <tr>
                 <th scope="col" className="p-4">
@@ -342,7 +342,7 @@ const TaskList = () => {
           <li>
             <a
               href="#"
-              className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-800 bg-gray-300 border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
+              className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-800 bg-gray-300 border border-gray-400 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
             >
               Previous
             </a>
@@ -350,7 +350,7 @@ const TaskList = () => {
           <li>
             <a
               href="#"
-              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-100 hover:text-gray-700"
             >
               1
             </a>
@@ -358,7 +358,7 @@ const TaskList = () => {
           <li>
             <a
               href="#"
-              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
+              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-400 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
             >
               Next
             </a>

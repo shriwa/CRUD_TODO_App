@@ -13,7 +13,7 @@ const Navbar = () => {
     { name: "Settings", link: "#settings" },
     currentUser && {
       name: (
-        <div className="md:flex items-center justify-center gap-3 grid text-gray-600">
+        <div className="flex items-center justify-center gap-3 text-gray-800 font-bold cursor-pointer">
           {currentUser.name} <LogoutButton />
         </div>
       ),
@@ -28,7 +28,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className={`fixed w-full left-0 top-0 z-[999]  bg-cyan-500 `}>
+    <nav className={`fixed w-full left-0 top-0 z-[999]  bg-cyan-500 shadow-lg`}>
       <div className="flex items-center justify-between ">
         <div className="flex items-center justify-between">
           <div className="mx-7">
@@ -61,7 +61,7 @@ const Navbar = () => {
           <ion-icon name="menu"></ion-icon>
         </div>
         <div
-          className={`md:hidden text-gray-900 absolute w-1.5/3 h-screen px-7 font-bold bg-cyan-400/90 top-0 right-0 duration-500 ${
+          className={`md:hidden text-gray-900 absolute w-1.5/3 h-screen px-7 font-bold bg-gray-300/90 top-0 right-0 duration-500 ${
             open ? "right-0" : "right-[-100%]"
           }`}
         >

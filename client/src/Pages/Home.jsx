@@ -5,7 +5,7 @@ import TaskList from "../Components/TaskList";
 
 const Home = () => {
   return (
-    <div className="flex flex-col min-h-screen overflow-auto">
+    <div className="flex flex-col min-h-screen ">
       <Navbar />
       <Todo />
       <TaskList />
