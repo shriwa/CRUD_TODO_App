@@ -43,7 +43,7 @@ export const AuthContextProvider = ({ children }) => {
     } catch (error) {
       const errorMessage = error.response?.data?.error || "Login failed";
       if (error.response?.status === 401) {
-        throw new Error("Invalid email or password");
+        throw new Error(errorMessage);
       } else {
         throw new Error(errorMessage);
       }

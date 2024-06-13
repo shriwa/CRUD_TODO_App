@@ -8,9 +8,9 @@ exports.addTask = async (req, res) => {
     const { task, taskDate, completed = false } = req.body;
 
     const newTask = new Task({
-      task: task,
+      task,
       createdAt: new Date(),
-      completed: completed,
+      completed,
       taskDate: new Date(taskDate),
       user: userId,
     });
@@ -42,7 +42,7 @@ exports.removeTask = async (req, res) => {
   }
 };
 
-// Get all tasks for the authenticated user
+// Get all tasks
 exports.getAllTasks = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -80,23 +80,26 @@ exports.updateTask = async (req, res) => {
     const userId = req.user.id;
     const taskId = req.params.id;
 
-    const updatedData = {
-      task: req.body.task,
-      taskDate: req.body.taskDate,
-      completed: req.body.completed,
+    const { task, taskDate, completed } = req.body;
+
+    let updatedData = {
+      task,
+      taskDate,
+      completed,
     };
 
-    const task = await Task.findOneAndUpdate(
+    const updatedTask = await Task.findOneAndUpdate(
       { _id: taskId, user: userId },
       updatedData,
       { new: true }
     );
-    if (!task) {
+
+    if (!updatedTask) {
       return res.status(404).json({ success: false, error: "Task not found" });
     }
 
     console.log("Task updated");
-    res.json({ success: true, task: task });
+    res.json({ success: true, task: updatedTask });
   } catch (error) {
     console.error("Error updating task:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });

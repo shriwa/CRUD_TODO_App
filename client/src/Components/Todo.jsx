@@ -63,7 +63,7 @@ const Todo = () => {
   };
 
   return (
-    <div className="flex items-center justify-center py-6 mt-20">
+    <div className="fixed top-0 left-0 w-full flex items-center justify-center py-6 mt-20 z-100">
       <div className="bg-gray-300 rounded-lg shadow-lg p-6 w-full md:max-w-2xl">
         <h1 className="text-2xl font-bold text-gray-800 mb-4 text-center">
           To-Do
