@@ -8,13 +8,8 @@ exports.addTask = async (req, res) => {
     const userId = req.user.id;
     const { task, taskDate, completed = false } = req.body;
 
-    if (task) {
-      slug = slugify(task, { lower: true, strict: true });
-    }
-
     const newTask = new Task({
       task,
-      slug,
       createdAt: new Date(),
       completed,
       taskDate: new Date(taskDate),
@@ -48,7 +43,7 @@ exports.removeTask = async (req, res) => {
   }
 };
 
-// Get all tasks for the authenticated user
+// Get all tasks
 exports.getAllTasks = async (req, res) => {
   try {
     const userId = req.user.id;
@@ -93,12 +88,6 @@ exports.updateTask = async (req, res) => {
       taskDate,
       completed,
     };
-
-    // Generate slug only if task is provided and not empty
-    if (task && task.trim() !== "") {
-      const slug = slugify(task, { lower: true, strict: true });
-      updatedData.slug = slug;
-    }
 
     const updatedTask = await Task.findOneAndUpdate(
       { _id: taskId, user: userId },
