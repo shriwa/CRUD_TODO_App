@@ -3,12 +3,11 @@ import API from ".";
 // Get all tasks
 export const getAllTasks = async (token) => {
   try {
-    const res = await API.get("/task/getalltask", {
+    const res = await API.get("/task/getalltasks", {
       headers: { auth_token: token },
     });
     return res.data;
   } catch (error) {
-    console.error("Fetching all tasks failed", error);
     throw error.response.data;
   }
 };
@@ -21,7 +20,6 @@ export const addTask = async (token, taskData) => {
     });
     return res.data;
   } catch (error) {
-    console.error("Adding task failed", error);
     throw error.response.data;
   }
 };
@@ -34,7 +32,6 @@ export const removeTask = async (id, token) => {
     });
     return res.data;
   } catch (error) {
-    console.error("Removing task failed", error);
     throw error.response.data;
   }
 };
@@ -47,7 +44,6 @@ export const getSingleTask = async (id, token) => {
     });
     return res.data;
   } catch (error) {
-    console.error("Fetching single task failed", error);
     throw error.response.data;
   }
 };
@@ -60,7 +56,6 @@ export const updateTask = async (token, id, payload) => {
     });
     return res.data;
   } catch (error) {
-    console.error("Updating task failed", error);
     throw error.response.data;
   }
 };

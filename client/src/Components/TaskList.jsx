@@ -97,7 +97,10 @@ const TaskList = () => {
         }, 100);
       } catch (error) {
         console.error("Error updating tasks:", error);
-        toast.error("Failed to update tasks");
+
+        setTimeout(() => {
+          toast.error("Failed to update tasks");
+        }, 100);
       } finally {
         setLoading(false);
       }
@@ -127,7 +130,9 @@ const TaskList = () => {
         }, 100);
       } catch (error) {
         console.error("Error updating tasks:", error);
-        toast.error("Failed to update tasks");
+        setTimeout(() => {
+          toast.error("Failed to update tasks");
+        }, 100);
       } finally {
         setLoading(false);
       }

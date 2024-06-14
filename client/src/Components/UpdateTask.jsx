@@ -48,7 +48,7 @@ const UpdateTask = ({ taskData }) => {
           toast.success("Task updated successfully");
           setTimeout(() => {
             window.location.reload();
-          }, 1000);
+          }, 1200);
         } else {
           toast.error("Failed to update task");
         }
@@ -58,6 +58,9 @@ const UpdateTask = ({ taskData }) => {
           "Error details:",
           error.response ? error.response.data : "No response data"
         );
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
         toast.error("Failed to update task");
       }
     }

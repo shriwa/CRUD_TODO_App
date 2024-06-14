@@ -6,13 +6,12 @@ const {
   getAllTasks,
   getSingleTask,
   updateTask,
-  getTasks,
 } = require("../Controller/taskController");
 const { fetchUser } = require("../Middleware/auth");
 
 router.post("/addtask", fetchUser, addTask);
 router.delete("/removetask/:id", fetchUser, removeTask);
-router.get("/getalltask", fetchUser, getAllTasks);
+router.get("/getalltasks", fetchUser, getAllTasks);
 router.get("/getsingletask/:id", fetchUser, getSingleTask);
 router.put("/updatetask/:id", fetchUser, updateTask);
 

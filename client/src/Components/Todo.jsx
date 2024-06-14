@@ -36,11 +36,14 @@ const Todo = () => {
       toast.success("Task added successfully!");
       setTimeout(() => {
         window.location.reload();
-      }, 1200);
+      }, 1500);
     } catch (error) {
       console.error("Failed to add task:", error);
       const errorMessage = error.message || "Failed to add task.";
       toast.error(errorMessage);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
     } finally {
       setLoading(false);
     }
