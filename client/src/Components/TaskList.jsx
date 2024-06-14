@@ -3,14 +3,17 @@ import UpdateTask from "./UpdateTask";
 import { getAllTasks, removeTask, updateTask } from "../API/tasks";
 import { AuthContext } from "../Context/AuthContext";
 import { RotatingLines } from "react-loader-spinner";
-import SearchButton from "./SearchButton";
+
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const TaskList = () => {
   const { token } = useContext(AuthContext);
   const [tasks, setTasks] = useState([]);
   const [selectedTasks, setSelectedTasks] = useState([]);
-  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -42,15 +45,21 @@ const TaskList = () => {
   };
 
   const handleRemoveTask = async (id) => {
-    if (window.confirm("Are you sure you want to delete this task?")) {
+    const confirmRemove = window.confirm(
+      "Are you sure you want to delete this task?"
+    );
+    if (confirmRemove) {
       setLoading(true);
       try {
         await removeTask(id, token);
         setTasks(tasks.filter((task) => task._id !== id));
         setSelectedTasks(selectedTasks.filter((taskId) => taskId !== id));
+        setTimeout(() => {
+          toast.success("Task removed successfully");
+        }, 100);
       } catch (error) {
         console.error("Error removing task:", error);
-        setError("Failed to remove task");
+        toast.error("Failed to remove task");
       } finally {
         setLoading(false);
       }
@@ -66,15 +75,14 @@ const TaskList = () => {
   };
 
   const handleMarkCompleted = async () => {
-    if (
-      window.confirm("Are you sure you want to mark all tasks as completed?")
-    ) {
+    const confirmMark = window.confirm(
+      "Are you sure you want to mark all tasks as completed?"
+    );
+    if (confirmMark) {
       setLoading(true);
       try {
         await Promise.all(
-          selectedTasks.map((id) =>
-            updateTask(token, id, { completed: true }, token)
-          )
+          selectedTasks.map((id) => updateTask(token, id, { completed: true }))
         );
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
@@ -84,9 +92,12 @@ const TaskList = () => {
           )
         );
         setSelectedTasks([]);
+        setTimeout(() => {
+          toast.success("Tasks marked as completed");
+        }, 100);
       } catch (error) {
         console.error("Error updating tasks:", error);
-        setError("Failed to update tasks");
+        toast.error("Failed to update tasks");
       } finally {
         setLoading(false);
       }
@@ -94,15 +105,14 @@ const TaskList = () => {
   };
 
   const handleMarkIncompleted = async () => {
-    if (
-      window.confirm("Are you sure you want to mark all tasks as incomplete?")
-    ) {
+    const confirmUnmark = window.confirm(
+      "Are you sure you want to mark all tasks as incomplete?"
+    );
+    if (confirmUnmark) {
       setLoading(true);
       try {
         await Promise.all(
-          selectedTasks.map((id) =>
-            updateTask(token, id, { completed: false }, token)
-          )
+          selectedTasks.map((id) => updateTask(token, id, { completed: false }))
         );
         setTasks((prevTasks) =>
           prevTasks.map((task) =>
@@ -112,24 +122,21 @@ const TaskList = () => {
           )
         );
         setSelectedTasks([]);
+        setTimeout(() => {
+          toast.success("Tasks marked as incomplete");
+        }, 100);
       } catch (error) {
         console.error("Error updating tasks:", error);
-        setError("Failed to update tasks");
+        toast.error("Failed to update tasks");
       } finally {
         setLoading(false);
       }
     }
   };
 
-  useEffect(() => {
-    console.log("Loading:", loading);
-    console.log("Tasks:", tasks);
-    console.log("Error:", error);
-  }, [loading, tasks, error]);
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center ">
+      <div className="flex items-center justify-center">
         <RotatingLines
           visible={true}
           height="56"
@@ -155,13 +162,14 @@ const TaskList = () => {
 
   return (
     <div className="w-full mt-22 overflow-hidden">
+      <ToastContainer />
       <div className="md:flex md:w-full justify-center items-center grid mr-10 ml-10 gap-5 mb-4 py-2 ">
-        <div className="flex items-center justify-center gap-4 ">
+        <div className="flex items-center justify-center gap-4">
           {/* Sort Button */}
           <button
             id="dropdownRadioButton"
             data-dropdown-toggle="dropdownRadio"
-            className="inline-flex shadow-md items-center w-20 text-gray-900 bg-gray-200 border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-3"
+            className="inline-flex shadow-md items-center w-20 text-gray-900 bg-gray-200 border hover:duration-300 border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-3"
             type="button"
           >
             <svg
@@ -217,18 +225,18 @@ const TaskList = () => {
               <input
                 type="text"
                 id="table-search-users"
-                className="block p-2 ps-10 text-sm shadow-md text-gray-900 border border-gray-300 rounded-lg w-60 md:w-80 bg-gray-200 hover:bg-gray-100 focus:ring-blue-500 focus:border-blue-500"
+                className="block p-2 ps-10 text-sm shadow-md text-gray-900 border border-gray-300 rounded-lg w-60 md:w-80 bg-gray-200 hover:duration-300 hover:bg-gray-100 focus:outline-none"
                 placeholder="Search for tasks"
-                onChange={(e) => handleFilter(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
         </div>
-        <div className=" flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-4">
           {/* Mark Button */}
           <button
             onClick={handleMarkCompleted}
-            className={`inline-flex gap-2 w-22 shadow-md  items-center justify-center text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
+            className={`inline-flex gap-2 w-22 shadow-md items-center justify-center text-gray-100 bg-green-700 border border-gray-300 focus:outline-none hover:bg-green-600 hover:duration-300 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
               selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={selectedTasks.length === 0}
@@ -239,7 +247,7 @@ const TaskList = () => {
           {/* Unmark Button */}
           <button
             onClick={handleMarkIncompleted}
-            className={`inline-flex gap-2 w-22 shadow-md  items-center justify-center text-gray-100 bg-red-700 border border-gray-300 focus:outline-none hover:bg-red-600 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
+            className={`inline-flex gap-2 w-22 shadow-md items-center justify-center text-gray-100 bg-red-700 border border-gray-300 focus:outline-none hover:bg-red-600 hover:duration-300 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 ${
               selectedTasks.length === 0 ? "opacity-50 cursor-not-allowed" : ""
             }`}
             disabled={selectedTasks.length === 0}
@@ -250,9 +258,9 @@ const TaskList = () => {
       </div>
 
       {/* Task Table */}
-      <div className=" overflow-x-auto mx-4 mt-4 rounded-lg">
-        <div className="h-72 overflow-auto ">
-          <table className="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-400 ">
+      <div className="overflow-x-auto mx-4 mt-4 rounded-lg">
+        <div className="h-72 overflow-auto">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-400">
             <thead className="sticky top-0 bg-gray-300 text-gray-800">
               <tr>
                 <th scope="col" className="p-4">
@@ -282,58 +290,64 @@ const TaskList = () => {
               </tr>
             </thead>
             <tbody>
-              {tasks.map((task) => (
-                <tr
-                  key={task._id}
-                  className={`border bg-gray-300 border-gray-400 text-gray-900 ${
-                    task.completed ? "bg-green-200" : "bg-red-200"
-                  }`}
-                >
-                  <td className="w-4 p-3">
-                    <div className="flex items-center">
-                      <input
-                        id={`checkbox-table-search-${task._id}`}
-                        type="checkbox"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-900 dark:focus:ring-blue-900 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-800"
-                        onChange={() => handleSelectTask(task._id)}
-                        checked={selectedTasks.includes(task._id)}
-                      />
-                      <label
-                        htmlFor={`checkbox-table-search-${task._id}`}
-                        className="sr-only"
+              {tasks
+                .filter((task) =>
+                  task.task.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((task) => (
+                  <tr
+                    key={task._id}
+                    className={`border bg-gray-300 border-gray-400 text-gray-900 ${
+                      task.completed ? "bg-green-200" : "bg-red-200"
+                    }`}
+                  >
+                    <td className="w-4 p-3">
+                      <div className="flex items-center">
+                        <input
+                          id={`checkbox-table-search-${task._id}`}
+                          type="checkbox"
+                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-900 dark:focus:ring-blue-900 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-800"
+                          onChange={() => handleSelectTask(task._id)}
+                          checked={selectedTasks.includes(task._id)}
+                        />
+                        <label
+                          htmlFor={`checkbox-table-search-${task._id}`}
+                          className="sr-only"
+                        >
+                          checkbox
+                        </label>
+                      </div>
+                    </td>
+                    <td className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
+                      {task.task}
+                    </td>
+                    <td className="px-6 py-4">
+                      {formatDateTime(task.createdAt)}
+                    </td>
+                    <td className="px-6 py-3">
+                      {formatDateTime(task.taskDate)}
+                    </td>
+                    <td className="px-6 py-3">
+                      {task.completed ? "Completed" : "Incomplete"}
+                    </td>
+                    <td className="flex items-center px-6 py-3">
+                      <UpdateTask taskData={task} />
+                      <button
+                        onClick={() => handleRemoveTask(task._id)}
+                        className="inline-flex gap-2 ml-2 items-center text-gray-100 bg-red-600 border border-gray-300 focus:outline-none hover:bg-red-500 focus:ring-2 focus:ring-red-900 font-medium rounded-lg text-sm px-3 py-1.5"
                       >
-                        checkbox
-                      </label>
-                    </div>
-                  </td>
-                  <td className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                    {task.task}
-                  </td>
-                  <td className="px-6 py-4">
-                    {formatDateTime(task.createdAt)}
-                  </td>
-                  <td className="px-6 py-3">{formatDateTime(task.taskDate)}</td>
-                  <td className="px-6 py-3">
-                    {task.completed ? "Completed" : "Incomplete"}
-                  </td>
-                  <td className="flex items-center px-6 py-3">
-                    <UpdateTask taskData={task} />
-                    <button
-                      onClick={() => handleRemoveTask(task._id)}
-                      className="inline-flex gap-2 ml-2 items-center text-gray-100 bg-red-600 border border-gray-300 focus:outline-none hover:bg-red-500 focus:ring-2 focus:ring-red-900 font-medium rounded-lg text-sm px-3 py-1.5"
-                    >
-                      Remove
-                    </button>
-                  </td>
-                </tr>
-              ))}
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
             </tbody>
           </table>
         </div>
       </div>
 
       {/* Pagination */}
-      <nav className="flex items-center  md:flex-row justify-center gap-20 mx-10 pt-4">
+      <nav className="flex items-center md:flex-row justify-center gap-20 mx-10 pt-4">
         <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
           Showing <span className="font-semibold text-gray-900">1-10</span> of{" "}
           <span className="font-semibold text-gray-900">1000</span>

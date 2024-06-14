@@ -6,6 +6,7 @@ const {
   getAllTasks,
   getSingleTask,
   updateTask,
+  getTasks,
 } = require("../Controller/taskController");
 const { fetchUser } = require("../Middleware/auth");
 

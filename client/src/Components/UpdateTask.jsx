@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useContext } from "react";
 import { updateTask } from "../API/tasks";
 import { AuthContext } from "../Context/AuthContext";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UpdateTask = ({ taskData }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({});
-  const [successAlert, setSuccessAlert] = useState(false);
-  const [failureAlert, setFailureAlert] = useState(false);
   const { token } = useContext(AuthContext);
 
   useEffect(() => {
@@ -20,8 +20,6 @@ const UpdateTask = ({ taskData }) => {
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
-    setSuccessAlert(false);
-    setFailureAlert(false);
   };
 
   const handleChange = (e) => {
@@ -43,17 +41,16 @@ const UpdateTask = ({ taskData }) => {
           completed: formData.status === "completed",
         };
 
-        console.log("Payload to be sent:", payload);
         const updatedTask = await updateTask(token, formData._id, payload);
-        console.log("Backend response:", updatedTask);
 
         if (updatedTask.success) {
           toggleModal();
-          setSuccessAlert(true);
-          console.log("Task updated successfully");
-          window.location.reload();
+          toast.success("Task updated successfully");
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         } else {
-          setFailureAlert(true);
+          toast.error("Failed to update task");
         }
       } catch (error) {
         console.error("Failed to update task", error);
@@ -61,13 +58,14 @@ const UpdateTask = ({ taskData }) => {
           "Error details:",
           error.response ? error.response.data : "No response data"
         );
-        setFailureAlert(true);
+        toast.error("Failed to update task");
       }
     }
   };
 
   return (
     <div>
+      <ToastContainer />
       <button
         onClick={toggleModal}
         className="inline-flex gap-2 items-center text-gray-200 bg-gray-600 border border-gray-300 focus:outline-none hover:bg-gray-500 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 "
@@ -192,30 +190,6 @@ const UpdateTask = ({ taskData }) => {
               </form>
             </div>
           </div>
-        </div>
-      )}
-
-      {successAlert && (
-        <div className="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow">
-          Task updated successfully!
-          <button
-            onClick={() => setSuccessAlert(false)}
-            className="ml-4 text-gray-300 hover:text-white"
-          >
-            &times;
-          </button>
-        </div>
-      )}
-
-      {failureAlert && (
-        <div className="fixed bottom-4 right-4 bg-red-500 text-white p-4 rounded-lg shadow">
-          Failed to update task!
-          <button
-            onClick={() => setFailureAlert(false)}
-            className="ml-4 text-gray-300 hover:text-white"
-          >
-            &times;
-          </button>
         </div>
       )}
     </div>
