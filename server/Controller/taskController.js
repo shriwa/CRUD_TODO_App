@@ -43,13 +43,60 @@ exports.removeTask = async (req, res) => {
   }
 };
 
+// // Get all tasks
+// exports.getAllTasks = async (req, res) => {
+//   try {
+//     const userId = req.user.id;
+//     let tasks = await Task.find({ user: userId });
+//     console.log("All tasks fetched");
+//     res.json(tasks);
+//   } catch (error) {
+//     console.error("Error fetching all tasks:", error);
+//     res.status(500).json({ success: false, error: "Internal Server Error" });
+//   }
+// };
+
 // Get all tasks
 exports.getAllTasks = async (req, res) => {
   try {
     const userId = req.user.id;
-    let tasks = await Task.find({ user: userId });
-    console.log("All tasks fetched");
-    res.json(tasks);
+    let query = { user: userId };
+
+    // Filtering
+    if (req.query.task) {
+      query.task = { $regex: new RegExp(req.query.task, "i") };
+    }
+
+    // Sorting
+    let sortQuery = { taskDate: -1 };
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      sortQuery = sortBy;
+    }
+
+    // Pagination
+    const page = parseInt(req.query.page, 10);
+    const limit = parseInt(req.query.limit, 10);
+    const skip = (page - 1) * limit;
+
+    // Execute query with filtering, sorting, and pagination
+    const tasks = await Task.find(query)
+      .sort(sortQuery)
+      .skip(skip)
+      .limit(limit);
+
+    // Count total documents (for pagination)
+    const totalTasks = await Task.countDocuments(query);
+
+    // Send response
+    res.status(200).json({
+      success: true,
+      count: tasks.length,
+      totalTasks,
+      page,
+      totalPages: Math.ceil(totalTasks / limit),
+      data: tasks,
+    });
   } catch (error) {
     console.error("Error fetching all tasks:", error);
     res.status(500).json({ success: false, error: "Internal Server Error" });

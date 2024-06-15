@@ -14,22 +14,34 @@ const TaskList = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null);
+  const [sort, setSort] = useState("");
+  const [page, setPage] = useState(1);
+  const [limit] = useState(4);
+  const [totalPages, setTotalPages] = useState();
+  const [totalTasks, setTotalTasks] = useState();
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const fetchedTasks = await getAllTasks(token);
-        setTasks(fetchedTasks);
+        const fetchedTasks = await getAllTasks(token, {
+          searchTerm,
+          sort,
+          page,
+          limit,
+        });
+        setTasks(fetchedTasks.data);
+        setTotalPages(fetchedTasks.totalPages);
+        setTotalTasks(fetchedTasks.totalTasks);
       } catch (error) {
         console.error("Error fetching tasks:", error);
-        setError("! Failed to fetch tasks");
+        setError("Failed to fetch tasks");
       } finally {
         setLoading(false);
       }
     };
 
     fetchTasks();
-  }, [token]);
+  }, [token, searchTerm, sort, page, limit]);
 
   const formatDateTime = (dateTimeString) => {
     const options = {
@@ -57,6 +69,9 @@ const TaskList = () => {
         setTimeout(() => {
           toast.success("Task removed successfully");
         }, 100);
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
       } catch (error) {
         console.error("Error removing task:", error);
         toast.error("Failed to remove task");
@@ -139,6 +154,18 @@ const TaskList = () => {
     }
   };
 
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSortChange = (sortOption) => {
+    setSort(sortOption);
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center">
@@ -176,6 +203,7 @@ const TaskList = () => {
             data-dropdown-toggle="dropdownRadio"
             className="inline-flex shadow-md items-center w-20 text-gray-900 bg-gray-200 border hover:duration-300 border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-3"
             type="button"
+            onClick={() => handleSortChange("taskDate")}
           >
             <svg
               className="w-3 h-3 text-gray-800 me-3"
@@ -203,6 +231,63 @@ const TaskList = () => {
               />
             </svg>
           </button>
+
+          {/* Sort Dropdown */}
+          <div
+            id="dropdownRadio"
+            className="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
+            data-popper-reference-hidden=""
+            data-popper-escaped=""
+            data-popper-placement="top"
+            style={{
+              position: "absolute",
+              inset: "auto auto 0px 0px",
+              margin: "0px",
+              transform: "translate(682px, 1088px)",
+            }}
+          >
+            <ul
+              className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
+              aria-labelledby="dropdownRadioButton"
+            >
+              <li>
+                <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                  <input
+                    id="task-date-radio"
+                    type="radio"
+                    value=""
+                    name="default-radio"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                    onClick={() => handleSortChange("taskDate")}
+                  />
+                  <label
+                    htmlFor="task-date-radio"
+                    className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+                  >
+                    Sort By Task Date
+                  </label>
+                </div>
+              </li>
+              <li>
+                <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                  <input
+                    id="task-name-radio"
+                    type="radio"
+                    value=""
+                    name="default-radio"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
+                    onClick={() => handleSortChange("taskName")}
+                  />
+                  <label
+                    htmlFor="task-name-radio"
+                    className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
+                  >
+                    Sort By Task Name
+                  </label>
+                </div>
+              </li>
+            </ul>
+          </div>
 
           {/* Search Button */}
           <div>
@@ -232,11 +317,12 @@ const TaskList = () => {
                 id="table-search-users"
                 className="block p-2 ps-10 text-sm shadow-md text-gray-900 border border-gray-300 rounded-lg w-60 md:w-80 bg-gray-200 hover:duration-300 hover:bg-gray-100 focus:outline-none"
                 placeholder="Search for tasks"
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={handleSearchChange}
               />
             </div>
           </div>
         </div>
+        <h1>Total Tasks {totalTasks}</h1>
         <div className="flex items-center justify-center gap-4">
           {/* Mark Button */}
           <button
@@ -264,19 +350,21 @@ const TaskList = () => {
 
       {/* Task Table */}
       <div className="overflow-x-auto mx-4 mt-4 rounded-lg">
-        <div className="h-72 overflow-auto">
+        <div className="overflow-auto">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 border border-gray-400">
             <thead className="sticky top-0 bg-gray-300 text-gray-800">
               <tr>
-                <th scope="col" className="p-4">
+                <th scope="col" className="px-6 py-3">
                   <input
                     type="checkbox"
-                    onChange={(e) =>
-                      setSelectedTasks(
-                        e.target.checked ? tasks.map((task) => task._id) : []
-                      )
-                    }
                     checked={selectedTasks.length === tasks.length}
+                    onChange={() => {
+                      if (selectedTasks.length === tasks.length) {
+                        setSelectedTasks([]);
+                      } else {
+                        setSelectedTasks(tasks.map((task) => task._id));
+                      }
+                    }}
                   />
                 </th>
                 <th scope="col" className="px-6 py-3">
@@ -295,57 +383,51 @@ const TaskList = () => {
               </tr>
             </thead>
             <tbody>
-              {tasks
-                .filter((task) =>
-                  task.task.toLowerCase().includes(searchTerm.toLowerCase())
-                )
-                .map((task) => (
-                  <tr
-                    key={task._id}
-                    className={`border bg-gray-300 border-gray-400 text-gray-900 ${
-                      task.completed ? "bg-green-200" : "bg-red-200"
-                    }`}
-                  >
-                    <td className="w-4 p-3">
-                      <div className="flex items-center">
-                        <input
-                          id={`checkbox-table-search-${task._id}`}
-                          type="checkbox"
-                          className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-900 dark:focus:ring-blue-900 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-800"
-                          onChange={() => handleSelectTask(task._id)}
-                          checked={selectedTasks.includes(task._id)}
-                        />
-                        <label
-                          htmlFor={`checkbox-table-search-${task._id}`}
-                          className="sr-only"
-                        >
-                          checkbox
-                        </label>
-                      </div>
-                    </td>
-                    <td className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
-                      {task.task}
-                    </td>
-                    <td className="px-6 py-4">
-                      {formatDateTime(task.createdAt)}
-                    </td>
-                    <td className="px-6 py-3">
-                      {formatDateTime(task.taskDate)}
-                    </td>
-                    <td className="px-6 py-3">
-                      {task.completed ? "Completed" : "Incomplete"}
-                    </td>
-                    <td className="flex items-center px-6 py-3">
-                      <UpdateTask taskData={task} />
-                      <button
-                        onClick={() => handleRemoveTask(task._id)}
-                        className="inline-flex gap-2 ml-2 items-center text-gray-100 bg-red-600 border border-gray-300 focus:outline-none hover:bg-red-500 focus:ring-2 focus:ring-red-900 font-medium rounded-lg text-sm px-3 py-1.5"
+              {tasks.map((task) => (
+                <tr
+                  key={task._id}
+                  className={`border bg-gray-300 border-gray-400 text-gray-900 ${
+                    task.completed ? "bg-green-200" : "bg-red-200"
+                  }`}
+                >
+                  <td className="w-4 p-3">
+                    <div className="flex items-center">
+                      <input
+                        id={`checkbox-table-search-${task._id}`}
+                        type="checkbox"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-900 dark:focus:ring-blue-900 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-800"
+                        onChange={() => handleSelectTask(task._id)}
+                        checked={selectedTasks.includes(task._id)}
+                      />
+                      <label
+                        htmlFor={`checkbox-table-search-${task._id}`}
+                        className="sr-only"
                       >
-                        Remove
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                        checkbox
+                      </label>
+                    </div>
+                  </td>
+                  <td className="px-6 py-3 font-medium text-gray-900 whitespace-nowrap">
+                    {task.task}
+                  </td>
+                  <td className="px-6 py-4">
+                    {formatDateTime(task.createdAt)}
+                  </td>
+                  <td className="px-6 py-3">{formatDateTime(task.taskDate)}</td>
+                  <td className="px-6 py-3">
+                    {task.completed ? "Completed" : "Incomplete"}
+                  </td>
+                  <td className="flex items-center px-6 py-3">
+                    <UpdateTask taskData={task} />
+                    <button
+                      onClick={() => handleRemoveTask(task._id)}
+                      className="inline-flex gap-2 ml-2 items-center text-gray-100 bg-red-600 border border-gray-300 focus:outline-none hover:bg-red-500 focus:ring-2 focus:ring-red-900 font-medium rounded-lg text-sm px-3 py-1.5"
+                    >
+                      Remove
+                    </button>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -354,33 +436,46 @@ const TaskList = () => {
       {/* Pagination */}
       <nav className="flex items-center md:flex-row justify-center gap-20 mx-10 pt-4">
         <span className="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto">
-          Showing <span className="font-semibold text-gray-900">1-10</span> of{" "}
-          <span className="font-semibold text-gray-900">1000</span>
+          Showing page{" "}
+          <span className="font-semibold text-gray-900">{page}</span> of{" "}
+          <span className="font-semibold text-gray-900">{totalPages}</span>
         </span>
         <ul className="inline-flex -space-x-px rtl:space-x-reverse text-sm h-8">
           <li>
-            <a
-              href="#"
-              className="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-800 bg-gray-300 border border-gray-400 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
+            <button
+              onClick={() => handlePageChange(page - 1)}
+              disabled={page === 1}
+              className={`flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-800 bg-gray-300 border border-gray-400 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 ${
+                page === 1 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
               Previous
-            </a>
+            </button>
           </li>
+          {Array.from({ length: totalPages }, (_, index) => (
+            <li key={index}>
+              <button
+                onClick={() => handlePageChange(index + 1)}
+                className={`flex items-center justify-center px-3 h-8 leading-tight ${
+                  page === index + 1
+                    ? "bg-gray-400 text-white"
+                    : "text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-100 hover:text-gray-700"
+                }`}
+              >
+                {index + 1}
+              </button>
+            </li>
+          ))}
           <li>
-            <a
-              href="#"
-              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-400 hover:bg-gray-100 hover:text-gray-700"
-            >
-              1
-            </a>
-          </li>
-          <li>
-            <a
-              href="#"
-              className="flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-400 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
+            <button
+              onClick={() => handlePageChange(page + 1)}
+              disabled={page === totalPages}
+              className={`flex items-center justify-center px-3 h-8 leading-tight text-gray-800 bg-gray-300 border border-gray-400 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 ${
+                page === totalPages ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
               Next
-            </a>
+            </button>
           </li>
         </ul>
       </nav>
