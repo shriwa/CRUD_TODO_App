@@ -70,12 +70,11 @@ const TaskList = () => {
         setTimeout(() => {
           toast.success("Task removed successfully");
         }, 100);
-        setTimeout(() => {
-          window.location.reload();
-        }, 1500);
       } catch (error) {
         console.error("Error removing task:", error);
-        toast.error("Failed to remove task");
+        setTimeout(() => {
+          toast.error("Failed to remove task");
+        }, 100);
       } finally {
         setLoading(false);
       }

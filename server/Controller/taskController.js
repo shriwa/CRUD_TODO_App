@@ -75,8 +75,8 @@ exports.getAllTasks = async (req, res) => {
     }
 
     // Pagination
-    const page = parseInt(req.query.page, 10);
-    const limit = parseInt(req.query.limit, 10);
+    const page = parseInt(req.query.page, 10 || 1);
+    const limit = parseInt(req.query.limit, 10 || 10);
     const skip = (page - 1) * limit;
 
     // Execute query with filtering, sorting, and pagination
