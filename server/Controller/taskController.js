@@ -68,7 +68,7 @@ exports.getAllTasks = async (req, res) => {
     }
 
     // Sorting
-    let sortQuery = { taskDate: -1 };
+    let sortQuery = { createdAt: -1 };
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
       sortQuery = sortBy;

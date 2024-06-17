@@ -3,6 +3,7 @@ import UpdateTask from "./UpdateTask";
 import { getAllTasks, removeTask, updateTask } from "../API/tasks";
 import { AuthContext } from "../Context/AuthContext";
 import { RotatingLines } from "react-loader-spinner";
+import { ArrowDownUp } from "lucide-react";
 
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -14,11 +15,12 @@ const TaskList = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null);
-  const [sort, setSort] = useState("");
+  const [sort, setSort] = useState("-createdAt");
   const [page, setPage] = useState(1);
   const [limit] = useState(4);
   const [totalPages, setTotalPages] = useState();
   const [totalTasks, setTotalTasks] = useState();
+  const [sortOrder, setSortOrder] = useState("asc");
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -196,99 +198,10 @@ const TaskList = () => {
     <div className="w-full mt-22 overflow-hidden">
       <ToastContainer />
       <div className="md:flex md:w-full justify-center items-center grid mr-10 ml-10 gap-5 mb-4 py-2 ">
+        <div className="inline-flex gap-2 w-22 shadow-md items-center justify-center text-gray-100 bg-cyan-500 border border-gray-300 font-medium rounded-lg text-sm px-3 py-1.5">
+          Total Tasks {totalTasks}
+        </div>
         <div className="flex items-center justify-center gap-4">
-          {/* Sort Button */}
-          <button
-            id="dropdownRadioButton"
-            data-dropdown-toggle="dropdownRadio"
-            className="inline-flex shadow-md items-center w-20 text-gray-900 bg-gray-200 border hover:duration-300 border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-3"
-            type="button"
-            onClick={() => handleSortChange("taskDate")}
-          >
-            <svg
-              className="w-3 h-3 text-gray-800 me-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
-            </svg>
-
-            <svg
-              className="w-2.5 h-2.5 ms-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
-          </button>
-
-          {/* Sort Dropdown */}
-          <div
-            id="dropdownRadio"
-            className="z-10 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600"
-            data-popper-reference-hidden=""
-            data-popper-escaped=""
-            data-popper-placement="top"
-            style={{
-              position: "absolute",
-              inset: "auto auto 0px 0px",
-              margin: "0px",
-              transform: "translate(682px, 1088px)",
-            }}
-          >
-            <ul
-              className="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
-              aria-labelledby="dropdownRadioButton"
-            >
-              <li>
-                <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                  <input
-                    id="task-date-radio"
-                    type="radio"
-                    value=""
-                    name="default-radio"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                    onClick={() => handleSortChange("taskDate")}
-                  />
-                  <label
-                    htmlFor="task-date-radio"
-                    className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
-                  >
-                    Sort By Task Date
-                  </label>
-                </div>
-              </li>
-              <li>
-                <div className="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                  <input
-                    id="task-name-radio"
-                    type="radio"
-                    value=""
-                    name="default-radio"
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500"
-                    onClick={() => handleSortChange("taskName")}
-                  />
-                  <label
-                    htmlFor="task-name-radio"
-                    className="w-full ml-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300"
-                  >
-                    Sort By Task Name
-                  </label>
-                </div>
-              </li>
-            </ul>
-          </div>
-
           {/* Search Button */}
           <div>
             <label htmlFor="table-search" className="sr-only">
@@ -322,7 +235,7 @@ const TaskList = () => {
             </div>
           </div>
         </div>
-        <h1>Total Tasks {totalTasks}</h1>
+
         <div className="flex items-center justify-center gap-4">
           {/* Mark Button */}
           <button
@@ -367,15 +280,21 @@ const TaskList = () => {
                     }}
                   />
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 flex items-center gap-5">
                   Task
+                  {/* <ArrowDownUp onClick={() => handleSortChange("taskName")} /> */}
                 </th>
                 <th scope="col" className="px-6 py-3">
                   Created on
                 </th>
-                <th scope="col" className="px-6 py-3">
+                <th scope="col" className="px-6 py-3 flex items-center gap-5">
                   Task Date
+                  <ArrowDownUp
+                    className=" cursor-pointer"
+                    onClick={() => handleSortChange("taskDate")}
+                  />
                 </th>
+
                 <th scope="col" className="px-6 py-3">
                   Status
                 </th>
