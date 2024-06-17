@@ -88,7 +88,6 @@ exports.getAllTasks = async (req, res) => {
     // Count total documents (for pagination)
     const totalTasks = await Task.countDocuments(query);
 
-    // Send response
     res.status(200).json({
       success: true,
       count: tasks.length,

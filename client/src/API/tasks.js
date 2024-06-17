@@ -1,10 +1,7 @@
 import API from ".";
 
 // Get all tasks
-export const getAllTasks = async (
-  token,
-  { searchTerm = "", sort = "", page, limit }
-) => {
+export const getAllTasks = async (token, { searchTerm, sort, page, limit }) => {
   try {
     const res = await API.get("/task/getalltasks", {
       headers: { auth_token: token },

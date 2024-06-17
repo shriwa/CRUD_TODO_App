@@ -15,12 +15,12 @@ const TaskList = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null);
-  const [sort, setSort] = useState("-createdAt");
+  const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(4);
   const [totalPages, setTotalPages] = useState();
   const [totalTasks, setTotalTasks] = useState();
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOrder, setSortOrder] = useState("");
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -52,7 +52,6 @@ const TaskList = () => {
       day: "numeric",
       hour: "numeric",
       minute: "numeric",
-      second: "numeric",
       hour12: true,
     };
     return new Date(dateTimeString).toLocaleString(undefined, options);
@@ -161,7 +160,13 @@ const TaskList = () => {
   };
 
   const handleSortChange = (sortOption) => {
-    setSort(sortOption);
+    if (sort === sortOption) {
+      setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+      setSort(`${sortOrder === "asc" ? "-" : ""}${sortOption}`);
+    } else {
+      setSort(sortOption);
+      setSortOrder("asc");
+    }
   };
 
   const handlePageChange = (newPage) => {
@@ -280,19 +285,32 @@ const TaskList = () => {
                     }}
                   />
                 </th>
-                <th scope="col" className="px-6 py-3 flex items-center gap-5">
-                  Task
-                  {/* <ArrowDownUp onClick={() => handleSortChange("taskName")} /> */}
+                <th scope="col" className="px-6 py-3 ">
+                  <div className="flex items-center gap-3">
+                    Task
+                    <ArrowDownUp
+                      className=" cursor-pointer"
+                      onClick={() => handleSortChange("task")}
+                    />
+                  </div>
+                </th>
+                <th scope="col" className="px-6 py-3  ">
+                  <div className="flex items-center gap-3">
+                    Created on
+                    <ArrowDownUp
+                      className=" cursor-pointer"
+                      onClick={() => handleSortChange("createdAt")}
+                    />
+                  </div>
                 </th>
                 <th scope="col" className="px-6 py-3">
-                  Created on
-                </th>
-                <th scope="col" className="px-6 py-3 flex items-center gap-5">
-                  Task Date
-                  <ArrowDownUp
-                    className=" cursor-pointer"
-                    onClick={() => handleSortChange("taskDate")}
-                  />
+                  <div className="flex items-center gap-3">
+                    Task Date
+                    <ArrowDownUp
+                      className=" cursor-pointer"
+                      onClick={() => handleSortChange("taskDate")}
+                    />
+                  </div>
                 </th>
 
                 <th scope="col" className="px-6 py-3">
