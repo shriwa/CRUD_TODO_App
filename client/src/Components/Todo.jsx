@@ -2,9 +2,7 @@ import React, { useState, useContext } from "react";
 import { addTask } from "../API/tasks";
 import { AuthContext } from "../Context/AuthContext";
 import { RotatingLines } from "react-loader-spinner";
-
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import ToastNotification from "./Toast";
 
 const Todo = () => {
   const [tasks, setTasks] = useState([]);
@@ -12,15 +10,19 @@ const Todo = () => {
   const [taskDateTime, setTaskDateTime] = useState("");
   const [loading, setLoading] = useState(false);
   const { token } = useContext(AuthContext);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("");
 
   const handleAddTask = async () => {
     if (newTask.trim() === "") {
-      toast.warning("Task cannot be empty. Please enter a task.");
+      setToastMessage("Task cannot be empty. Please enter a task.");
+      setToastType("warning");
       return;
     }
 
     if (taskDateTime.trim() === "") {
-      toast.warning("Date cannot be empty. Please select a date.");
+      setToastType("warning");
+      setToastMessage("Date cannot be empty. Please select a date.");
       return;
     }
 
@@ -33,7 +35,8 @@ const Todo = () => {
       setTasks([...tasks, res.task]);
       setNewTask("");
       setTaskDateTime("");
-      toast.success("Task added successfully!");
+      setToastType("success");
+      setToastMessage("Task added successfully!");
       setTimeout(() => {
         window.location.reload();
       }, 1500);
@@ -56,7 +59,7 @@ const Todo = () => {
           To-Do
         </h1>
 
-        <ToastContainer />
+        <ToastNotification message={toastMessage} type={toastType} />
 
         <div className="flex mb-4">
           <input

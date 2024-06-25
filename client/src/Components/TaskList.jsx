@@ -4,9 +4,7 @@ import { getAllTasks, removeTask, updateTask } from "../API/tasks";
 import { AuthContext } from "../Context/AuthContext";
 import { RotatingLines } from "react-loader-spinner";
 import { ArrowDownUp } from "lucide-react";
-
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import ToastNotification from "./Toast";
 
 const TaskList = () => {
   const { token } = useContext(AuthContext);
@@ -14,6 +12,7 @@ const TaskList = () => {
   const [selectedTasks, setSelectedTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
+
   const [error, setError] = useState(null);
   const [sort, setSort] = useState("");
   const [page, setPage] = useState(1);
@@ -21,6 +20,14 @@ const TaskList = () => {
   const [totalPages, setTotalPages] = useState();
   const [totalTasks, setTotalTasks] = useState();
   const [sortOrder, setSortOrder] = useState("");
+
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastType, setToastType] = useState("");
+
+  const showToast = (message, type) => {
+    setToastMessage(message);
+    setToastType(type);
+  };
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -68,12 +75,12 @@ const TaskList = () => {
         setTasks(tasks.filter((task) => task._id !== id));
         setSelectedTasks(selectedTasks.filter((taskId) => taskId !== id));
         setTimeout(() => {
-          toast.success("Task removed successfully");
+          showToast("Task removed successfully", "success");
         }, 100);
       } catch (error) {
         console.error("Error removing task:", error);
         setTimeout(() => {
-          toast.error("Failed to remove task");
+          showToast("Failed to remove task", "error");
         }, 100);
       } finally {
         setLoading(false);
@@ -108,14 +115,13 @@ const TaskList = () => {
         );
         setSelectedTasks([]);
         setTimeout(() => {
-          toast.success("Tasks marked as completed");
-        }, 100);
+          showToast("Task removed successfully", "success");
+        }, 50);
       } catch (error) {
         console.error("Error updating tasks:", error);
-
         setTimeout(() => {
-          toast.error("Failed to update tasks");
-        }, 100);
+          showToast("Failed to remove task", "error");
+        }, 50);
       } finally {
         setLoading(false);
       }
@@ -140,14 +146,15 @@ const TaskList = () => {
           )
         );
         setSelectedTasks([]);
+
         setTimeout(() => {
-          toast.success("Tasks marked as incomplete");
-        }, 100);
+          showToast("Tasks marked as completed", "success");
+        }, 50);
       } catch (error) {
         console.error("Error updating tasks:", error);
         setTimeout(() => {
-          toast.error("Failed to update tasks");
-        }, 100);
+          showToast("Failed to update tasks", "error");
+        }, 50);
       } finally {
         setLoading(false);
       }
@@ -200,7 +207,8 @@ const TaskList = () => {
 
   return (
     <div className="w-full mt-22 overflow-hidden">
-      <ToastContainer />
+      <ToastNotification message={toastMessage} type={toastType} />
+
       <div className="md:flex md:w-full justify-center items-center grid mr-10 ml-10 gap-5 mb-4 py-2 ">
         <div className="inline-flex gap-2 w-22 shadow-md items-center justify-center text-gray-100 bg-cyan-500 border border-gray-300 font-medium rounded-lg text-sm px-3 py-1.5">
           Total Tasks {totalTasks}
@@ -274,6 +282,7 @@ const TaskList = () => {
                 <th scope="col" className="px-6 py-3">
                   <input
                     type="checkbox"
+                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-900"
                     checked={selectedTasks.length === tasks.length}
                     onChange={() => {
                       if (selectedTasks.length === tasks.length) {
@@ -331,7 +340,7 @@ const TaskList = () => {
                       <input
                         id={`checkbox-table-search-${task._id}`}
                         type="checkbox"
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-900 dark:focus:ring-blue-900 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-800"
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-900"
                         onChange={() => handleSelectTask(task._id)}
                         checked={selectedTasks.includes(task._id)}
                       />
